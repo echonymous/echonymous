@@ -79,7 +79,7 @@ To ensure sensitive data isn't pushed to GitHub, add the below entry to the `.gi
    &nbsp;&nbsp;• If Lombok is not installed:  
          &nbsp;&nbsp;&nbsp;&nbsp;- Click **Browse Repositories**.  
          &nbsp;&nbsp;&nbsp;&nbsp;- Search for **Lombok**.  
-         &nbsp;&nbsp;&nbsp;&nbsp;- Click **Instal**`.  
+         &nbsp;&nbsp;&nbsp;&nbsp;- Click **Install**.  
    &nbsp;&nbsp;• Restart IntelliJ IDEA after the plugin installation.  
    
 ---
