@@ -40,8 +40,8 @@ Start by cloning the repository to your local machine using the following comman
 To ensure sensitive data isn't pushed to GitHub, add the following entries to the `.gitignore` file:
 
   ```gitignore
-  # Ignore development environment properties files
-  /src/main/resources/application-*.properties
+  /src/main/resources/application-dev.properties
+  /src/main/resources/application-prod.properties
 
 ## Step 4: Environment-Specific Configuration
 
