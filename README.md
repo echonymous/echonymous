@@ -35,15 +35,7 @@ Start by cloning the repository to your local machine using the following comman
      
   3. IntelliJ IDEA will automatically detect and import the project as a Maven project and download necessary dependencies.
 
-## Step 3: Configure `.gitignore`
-
-To ensure sensitive data isn't pushed to GitHub, add the following entries to the `.gitignore` file:
-
-  ```gitignore
-  /src/main/resources/application-dev.properties
-  /src/main/resources/application-prod.properties
-
-## Step 4: Environment-Specific Configuration
+## Step 3: Environment-Specific Configuration
 
 This project uses different property files for different environments (development and production). To set up the local development environment, follow these steps:
 
@@ -65,6 +57,13 @@ This project uses different property files for different environments (developme
    spring.security.user.name=your_username_here
    spring.security.user.password=your_password_here
 
+## Step 4: Configure `.gitignore`
+
+To ensure sensitive data isn't pushed to GitHub, add the below entry to the `.gitignore` file:
+```gitignore
+/src/main/resources/application-*.properties
+````
+
 ## Step 5: Install Lombok Plugin in IntelliJ IDEA
 
 **Lombok** is used for generating getters, setters, and other boilerplate code. If Lombok annotations are not working in your IntelliJ IDEA, follow these steps:
@@ -73,30 +72,30 @@ This project uses different property files for different environments (developme
 
 ### 1. Install the Lombok Plugin
 
-   • Open IntelliJ IDEA.  
-   • Go to **File > Settings** (or **IntelliJ IDEA > Preferences** on macOS).  
-   • In the search bar, type **Plugins**.  
-   • Click on **Installed**, and search for **Lombok**.  
-   • If Lombok is not installed:  
-     - Click **Browse Repositories**.  
-     - Search for **Lombok**.  
-     - Click **Install**.  
-   • Restart IntelliJ IDEA after the plugin installation.  
-
+   &nbsp;&nbsp;• Open **IntelliJ IDEA**.  
+   &nbsp;&nbsp;• Go to **File -> Settings** (or **IntelliJ IDEA -> Preferences** on macOS).  
+   &nbsp;&nbsp;• In the search bar, type **Plugins**.  
+   &nbsp;&nbsp;• Click on **Installed**, and search for **Lombok**.  
+   &nbsp;&nbsp;• If Lombok is not installed:  
+         &nbsp;&nbsp;&nbsp;&nbsp;- Click **Browse Repositories**.  
+         &nbsp;&nbsp;&nbsp;&nbsp;- Search for **Lombok**.  
+         &nbsp;&nbsp;&nbsp;&nbsp;- Click **Instal**`.  
+   &nbsp;&nbsp;• Restart IntelliJ IDEA after the plugin installation.  
+   
 ---
 
 ### 2. Enable Annotation Processing
 
-   • Go to **Settings > Build, Execution, Deployment > Compiler > Annotation Processors**.  
-   • Check the box for **Enable Annotation Processing**.  
-   • Click **Apply**.  
+   &nbsp;&nbsp;• Go to **Settings -> Build, Execution, Deployment -> Compiler -> Annotation Processors**.  
+   &nbsp;&nbsp;• Check the box for **Enable Annotation Processing**.  
+   &nbsp;&nbsp;• Click **Apply**.  
 
 ---
 
 ### 3. Obtain Processor from Project Classpath
 
-   • In the **Annotation Processors** settings, ensure you select **Obtain processors from project classpath**.  
-   • Click **Apply**.  
+   &nbsp;&nbsp;• In the **Annotation Processors** settings, ensure you select **Obtain processors from project classpath**.  
+   &nbsp;&nbsp;• Click **Apply**.  
 
 ## Step 6: Database Setup
 
@@ -117,9 +116,7 @@ To set up the database, follow these steps:
 ### 3. Create the Database
    • Run the following SQL query to create the database:
 
-     ```sql
      CREATE DATABASE echonymous;
-     ```
 
 ---
 
@@ -144,6 +141,6 @@ Once the application properties are set up and the environment is configured, yo
    ```bash
    mvn spring-boot:run
 
-Step 8: Verify the Application
+### Step 8: Verify the Application
 
 Open your browser and visit **http://localhost:8080/** to check if the application is running.
