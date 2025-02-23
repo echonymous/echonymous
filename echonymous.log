@@ -1,0 +1,118 @@
+2025-02-23T00:06:17.883-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=58s335ms).
+2025-02-23T00:22:02.828-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=15m44s953ms).
+2025-02-23T00:29:14.361-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=6m41s516ms).
+2025-02-23T00:45:34.999-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=16m20s637ms).
+2025-02-23T01:22:05.101-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=36m30s103ms).
+2025-02-23T01:38:48.663-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=16m43s563ms).
+2025-02-23T02:48:52.951-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h10m4s288ms).
+2025-02-23T03:54:54.866-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h5m31s905ms).
+2025-02-23T05:34:58.774-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h40m3s909ms).
+2025-02-23T06:01:20.101-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=26m21s327ms).
+2025-02-23T06:04:53.092-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=3m32s991ms).
+2025-02-23T06:44:07.188-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=38m44s86ms).
+2025-02-23T07:19:23.356-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=34m46s156ms).
+2025-02-23T07:21:09.534-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1m16s154ms).
+2025-02-23T10:58:12.108-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=15m29s938ms).
+2025-02-23T11:01:50.269-06:00  WARN 15459 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=3m38s166ms).
+2025-02-23T14:50:35.633-06:00  INFO 21206 --- [main] c.echonymous.EchonymousApplicationTests  : Starting EchonymousApplicationTests using Java 23.0.2 with PID 21206 (started by mparajuli in /Users/mparajuli/Desktop/echonymous)
+2025-02-23T14:50:35.634-06:00 DEBUG 21206 --- [main] c.echonymous.EchonymousApplicationTests  : Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-02-23T14:50:35.634-06:00  INFO 21206 --- [main] c.echonymous.EchonymousApplicationTests  : No active profile set, falling back to 1 default profile: "default"
+2025-02-23T14:50:35.949-06:00  INFO 21206 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-02-23T14:50:35.973-06:00  INFO 21206 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 19 ms. Found 1 JPA repository interface.
+2025-02-23T14:50:36.166-06:00  INFO 21206 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-02-23T14:50:36.193-06:00  INFO 21206 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-02-23T14:50:36.207-06:00  INFO 21206 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-02-23T14:50:36.318-06:00  INFO 21206 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-02-23T14:50:36.330-06:00  INFO 21206 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-02-23T14:50:36.438-06:00  INFO 21206 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@64ec1459
+2025-02-23T14:50:36.439-06:00  INFO 21206 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-02-23T14:50:36.472-06:00  INFO 21206 --- [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-02-23T14:50:36.800-06:00  INFO 21206 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-02-23T14:50:36.833-06:00  INFO 21206 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-02-23T14:50:36.976-06:00  WARN 21206 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-02-23T14:50:36.989-06:00  INFO 21206 --- [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-02-23T14:50:37.228-06:00  INFO 21206 --- [main] c.echonymous.EchonymousApplicationTests  : Started EchonymousApplicationTests in 1.739 seconds (process running for 2.168)
+2025-02-23T14:50:37.643-06:00  INFO 21206 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-02-23T14:50:37.644-06:00  INFO 21206 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-02-23T14:50:37.646-06:00  INFO 21206 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-02-23T15:08:30.744-06:00  INFO 15459 --- [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-02-23T15:08:30.762-06:00  INFO 15459 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-02-23T15:08:30.777-06:00  INFO 15459 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-02-23T15:08:30.786-06:00  INFO 15459 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-02-23T15:08:30.796-06:00  INFO 15459 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-02-23T15:09:02.303-06:00  INFO 21431 --- [main] com.echonymous.EchonymousApplication     : Starting EchonymousApplication using Java 18.0.2.1 with PID 21431 (/Users/mparajuli/Desktop/echonymous/target/classes started by mparajuli in /Users/mparajuli/Desktop/echonymous)
+2025-02-23T15:09:02.305-06:00 DEBUG 21431 --- [main] com.echonymous.EchonymousApplication     : Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-02-23T15:09:02.307-06:00  INFO 21431 --- [main] com.echonymous.EchonymousApplication     : The following 1 profile is active: "dev"
+2025-02-23T15:09:03.565-06:00  INFO 21431 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-02-23T15:09:03.646-06:00  INFO 21431 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 69 ms. Found 1 JPA repository interface.
+2025-02-23T15:09:04.619-06:00  INFO 21431 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-02-23T15:09:04.631-06:00  INFO 21431 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-02-23T15:09:04.631-06:00  INFO 21431 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.36]
+2025-02-23T15:09:04.680-06:00  INFO 21431 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-02-23T15:09:04.681-06:00  INFO 21431 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2244 ms
+2025-02-23T15:09:04.923-06:00  INFO 21431 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-02-23T15:09:04.950-06:00  INFO 21431 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-02-23T15:09:04.968-06:00  INFO 21431 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-02-23T15:09:05.242-06:00  INFO 21431 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-02-23T15:09:05.271-06:00  INFO 21431 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-02-23T15:09:05.448-06:00  INFO 21431 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1d8e9d3e
+2025-02-23T15:09:05.451-06:00  INFO 21431 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-02-23T15:09:05.516-06:00  INFO 21431 --- [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-02-23T15:09:06.060-06:00  INFO 21431 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-02-23T15:09:06.090-06:00  INFO 21431 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-02-23T15:09:06.575-06:00  WARN 21431 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-02-23T15:09:06.627-06:00  INFO 21431 --- [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-02-23T15:09:07.602-06:00  INFO 21431 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-02-23T15:09:07.618-06:00  INFO 21431 --- [main] com.echonymous.EchonymousApplication     : Started EchonymousApplication in 6.126 seconds (process running for 6.653)
+2025-02-23T15:09:26.302-06:00  INFO 21431 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-02-23T15:09:26.303-06:00  INFO 21431 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-02-23T15:09:26.307-06:00  INFO 21431 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 3 ms
+2025-02-23T15:09:26.421-06:00  INFO 21431 --- [http-nio-8080-exec-1] c.echonymous.controller.AuthController   : Attempting login for user: mausam
+2025-02-23T15:09:26.615-06:00  INFO 21431 --- [http-nio-8080-exec-1] c.echonymous.controller.AuthController   : Login successful for user: mausam
+2025-02-23T15:09:30.833-06:00  INFO 21431 --- [http-nio-8080-exec-3] c.echonymous.controller.AuthController   : Signing up user: mausam12
+2025-02-23T15:09:37.496-06:00  INFO 21431 --- [http-nio-8080-exec-5] c.echonymous.controller.AuthController   : Signing up user: mausam12
+2025-02-23T15:32:34.373-06:00  WARN 21431 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=58s540ms).
+2025-02-23T15:39:23.957-06:00  WARN 21431 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=6m49s603ms).
+2025-02-23T15:53:19.464-06:00  WARN 21431 --- [HikariPool-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=13m25s490ms).
+2025-02-23T15:58:54.805-06:00  INFO 21905 --- [main] c.echonymous.EchonymousApplicationTests  : Starting EchonymousApplicationTests using Java 23.0.2 with PID 21905 (started by mparajuli in /Users/mparajuli/Desktop/echonymous)
+2025-02-23T15:58:54.806-06:00 DEBUG 21905 --- [main] c.echonymous.EchonymousApplicationTests  : Running with Spring Boot v3.4.3, Spring v6.2.3
+2025-02-23T15:58:54.806-06:00  INFO 21905 --- [main] c.echonymous.EchonymousApplicationTests  : The following 1 profile is active: "dev"
+2025-02-23T15:58:55.050-06:00  INFO 21905 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-02-23T15:58:55.071-06:00  INFO 21905 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 16 ms. Found 1 JPA repository interface.
+2025-02-23T15:58:55.244-06:00  INFO 21905 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-02-23T15:58:55.265-06:00  INFO 21905 --- [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.8.Final
+2025-02-23T15:58:55.276-06:00  INFO 21905 --- [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-02-23T15:58:55.388-06:00  INFO 21905 --- [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-02-23T15:58:55.398-06:00  INFO 21905 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-02-23T15:58:55.493-06:00  INFO 21905 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3f06ebe0
+2025-02-23T15:58:55.497-06:00  INFO 21905 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-02-23T15:58:55.528-06:00  INFO 21905 --- [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-02-23T15:58:55.834-06:00  INFO 21905 --- [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-02-23T15:58:55.864-06:00  INFO 21905 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-02-23T15:58:56.003-06:00  WARN 21905 --- [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-02-23T15:58:56.013-06:00  INFO 21905 --- [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2025-02-23T15:58:56.233-06:00  INFO 21905 --- [main] c.echonymous.EchonymousApplicationTests  : Started EchonymousApplicationTests in 1.546 seconds (process running for 1.927)
+2025-02-23T15:58:56.659-06:00  INFO 21905 --- [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-02-23T15:58:56.660-06:00  INFO 21905 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-02-23T15:58:56.662-06:00  INFO 21905 --- [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
