@@ -3,6 +3,7 @@ package com.echonymous.controller;
 import com.echonymous.dto.LoginDTO;
 import com.echonymous.dto.UserDTO;
 import com.echonymous.service.UserService;
+import com.echonymous.util.JwtUtils;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
     private final UserService userService;
+    private final JwtUtils jwtUtils;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, JwtUtils jwtUtils) {
         this.userService = userService;
+        this.jwtUtils = jwtUtils;
     }
 
     @PostMapping("/signup")
@@ -40,7 +43,9 @@ public class AuthController {
 
         if (isLoginSuccess) {
             log.info("Login successful for user: {}", loginDTO.getUsername());
-            return ResponseEntity.ok("Login successful, redirecting to homepage.");
+            String token = jwtUtils.generateToken(loginDTO.getUsername());
+            log.info("JWT Token: {}", token);
+            return ResponseEntity.ok(token);
         } else {
             log.error("Login failed for user: {}", loginDTO.getUsername());
             return ResponseEntity.status(401).body("Invalid Credentials!");

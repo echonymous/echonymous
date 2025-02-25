@@ -1,4 +1,4 @@
-package com.echonymous.model;
+package com.echonymous.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -30,4 +30,5 @@ public class User {
     private String password;
 
     // Will add a set of roles later - use annotations to create bridge table - lazy load
+    // Prolly add fields for createdAt, updatedAt
 }

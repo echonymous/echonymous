@@ -2,7 +2,7 @@ package com.echonymous.service;
 
 import com.echonymous.dto.LoginDTO;
 import com.echonymous.dto.UserDTO;
-import com.echonymous.model.User;
+import com.echonymous.entity.User;
 import com.echonymous.repository.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
 package com.echonymous.repository;
 
-import com.echonymous.model.User;
+import com.echonymous.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
