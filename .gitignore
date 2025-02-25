@@ -35,4 +35,7 @@ build/
 # Ignore all application- property files in resources
 /src/main/resources/application-*.properties
 
+# Ignore logs
+logs/
+
 
