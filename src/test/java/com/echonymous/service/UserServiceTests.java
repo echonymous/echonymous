@@ -46,7 +46,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testSignup_UsernameAlreadyExists_ThrowsRuntimeException() {
+    public void testSignup_ShouldThrowExceptionUsernameAlreadyExists() {
         // Arrange
         when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.of(new User()));
 
@@ -56,7 +56,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testSignup_EmailAlreadyExists_ThrowsRuntimeException() {
+    public void testSignup_ShouldThrowExceptionEmailAlreadyExists() {
         when(userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(new User()));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.signup(userDTO));
@@ -64,7 +64,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testSignup_Success() {
+    public void testSignup_ShouldSignupSuccessfully() {
         when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.empty());
         when(userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(userDTO.getPassword())).thenReturn("encodedTestPassword");
@@ -75,12 +75,12 @@ class UserServiceTests {
     }
 
     @Test
-    public void testSignup_NullInput_ThrowsNullPointerException() {
+    public void testSignup_ShouldThrowExceptionForNullInput() {
         assertThrows(NullPointerException.class, () -> userService.signup(null));
     }
 
     @Test
-    public void testLogin_ReturnsSuccess() {
+    public void testLogin_ShouldReturnLoginSuccess() {
         // Arrange
         when(userRepository.findByUsername(loginDTO.getUsername())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())).thenReturn(true);
@@ -93,7 +93,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testLogin_InvalidUsername_ReturnsFalse() {
+    public void testLogin_ShouldReturnFalseForInvalidUsername() {
         when(userRepository.findByUsername(loginDTO.getUsername())).thenReturn(Optional.empty());
 
         boolean isLoginSuccess = userService.login(loginDTO);
@@ -102,7 +102,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testLogin_InvalidPassword_ReturnsFalse() {
+    public void testLogin_ShouldReturnFalseForInvalidPassword() {
         when(userRepository.findByUsername(loginDTO.getUsername())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())).thenReturn(false);
 
@@ -112,7 +112,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testLogin_NullCredentials_ReturnsFalse() {
+    public void testLogin_ShouldReturnFalseForNullCredentials() {
         LoginDTO nullLoginDTO = new LoginDTO(null, null);
 
         boolean isLoginSuccess = userService.login(nullLoginDTO);
@@ -121,7 +121,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testLogin_EmptyFields_ReturnsFalse() {
+    public void testLogin_ShouldReturnFalseForEmptyInputFields() {
         LoginDTO emptyLoginDTO = new LoginDTO("", "");
 
         boolean isLoginSuccess = userService.login(emptyLoginDTO);
@@ -130,7 +130,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testFindByUsername_UserExists_ReturnsUser() {
+    public void testFindByUsername_ShouldReturnUser() {
         when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.of(user));
 
         User foundUser = userService.findByUsername(userDTO.getUsername());
@@ -140,7 +140,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testFindByUsername_UserNotFound_ThrowsRuntimeException() {
+    public void testFindByUsername_ShouldThrowExceptionUserNotFound() {
         when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.findByUsername(userDTO.getUsername()));
