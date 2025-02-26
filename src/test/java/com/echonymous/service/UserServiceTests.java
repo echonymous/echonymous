@@ -18,8 +18,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class) // This ensures Mockito annotations are processed
+@ExtendWith(MockitoExtension.class)
 class UserServiceTests {
+
     @Mock
     private UserRepository userRepository;
 
@@ -35,17 +36,17 @@ class UserServiceTests {
 
     @BeforeEach
     public void setup() {
-        userDTO = new UserDTO("testUser@gmail.com", "testUser", "testPassword");
-        loginDTO = new LoginDTO("testUser", "testPassword");
+        userDTO = new UserDTO("testUser@gmail.com", "testUser", "testPassword123");
+        loginDTO = new LoginDTO("testUser", "testPassword123");
 
         user = new User();
         user.setEmail("testUser@gmail.com");
         user.setUsername("testUser");
-        user.setPassword("encodedTestPassword");
+        user.setPassword("encodedTestPassword123");
     }
 
     @Test
-    public void testSignup_ThrowExceptionUsernameAlreadyExists() {
+    public void testSignup_UsernameAlreadyExists_ThrowsRuntimeException() {
         // Arrange
         when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.of(new User()));
 
@@ -55,64 +56,95 @@ class UserServiceTests {
     }
 
     @Test
-    public void testSignup_ThrowExceptionEmailAlreadyExists() {
-        // Arrange
+    public void testSignup_EmailAlreadyExists_ThrowsRuntimeException() {
         when(userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(new User()));
 
-        // Act and Assert
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.signup(userDTO));
         assertEquals("Email already exists.", exception.getMessage());
     }
 
     @Test
     public void testSignup_Success() {
-        // Arrange: Mock the repository to return empty for both username and email checks.
         when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.empty());
         when(userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(userDTO.getPassword())).thenReturn("encodedTestPassword");
 
-        // Act: Call the signup method.
         userService.signup(userDTO);
 
-        // Assert: Verify that the userRepository's save method was called.
         verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
+    public void testSignup_NullInput_ThrowsNullPointerException() {
+        assertThrows(NullPointerException.class, () -> userService.signup(null));
+    }
+
+    @Test
     public void testLogin_ReturnsSuccess() {
-        // Arrange: Mock repository to return user and mock password matching.
+        // Arrange
         when(userRepository.findByUsername(loginDTO.getUsername())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())).thenReturn(true);
 
         // Act
         boolean isLoginSuccess = userService.login(loginDTO);
 
-        // Assert: Verify login is successful.
+        // Assert
         assertTrue(isLoginSuccess);
     }
 
     @Test
     public void testLogin_InvalidUsername_ReturnsFalse() {
-        // Arrange: Mock repository to return empty for username lookup.
         when(userRepository.findByUsername(loginDTO.getUsername())).thenReturn(Optional.empty());
 
-        // Act
         boolean isLoginSuccess = userService.login(loginDTO);
 
-        // Assert: Verify login fails.
         assertFalse(isLoginSuccess);
     }
 
     @Test
     public void testLogin_InvalidPassword_ReturnsFalse() {
-        // Arrange: Mock repository to return user and mock password not matching.
         when(userRepository.findByUsername(loginDTO.getUsername())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())).thenReturn(false);
 
-        // Act
         boolean isLoginSuccess = userService.login(loginDTO);
 
-        // Assert: Verify login fails.
         assertFalse(isLoginSuccess);
     }
+
+    @Test
+    public void testLogin_NullCredentials_ReturnsFalse() {
+        LoginDTO nullLoginDTO = new LoginDTO(null, null);
+
+        boolean isLoginSuccess = userService.login(nullLoginDTO);
+
+        assertFalse(isLoginSuccess);
+    }
+
+    @Test
+    public void testLogin_EmptyFields_ReturnsFalse() {
+        LoginDTO emptyLoginDTO = new LoginDTO("", "");
+
+        boolean isLoginSuccess = userService.login(emptyLoginDTO);
+
+        assertFalse(isLoginSuccess);
+    }
+
+    @Test
+    public void testFindByUsername_UserExists_ReturnsUser() {
+        when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.of(user));
+
+        User foundUser = userService.findByUsername(userDTO.getUsername());
+
+        assertNotNull(foundUser);
+        assertEquals("testUser", foundUser.getUsername());
+    }
+
+    @Test
+    public void testFindByUsername_UserNotFound_ThrowsRuntimeException() {
+        when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.findByUsername(userDTO.getUsername()));
+        assertEquals("User not found.", exception.getMessage());
+    }
 }
+

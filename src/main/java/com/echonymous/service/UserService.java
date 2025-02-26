@@ -19,7 +19,7 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void signup(UserDTO userDTO) {
+    public User signup(UserDTO userDTO) {
         Optional<User> existingUserByUsername = userRepository.findByUsername(userDTO.getUsername());
         if (existingUserByUsername.isPresent()) {
             throw new RuntimeException("Username already exists.");
@@ -36,6 +36,7 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
         userRepository.save(user);
+        return user;
     }
 
     public boolean login(LoginDTO loginDTO) {
@@ -46,5 +47,10 @@ public class UserService {
             return passwordEncoder.matches(loginDTO.getPassword(), user.getPassword());
         }
         return false;
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found."));
     }
 }
