@@ -32,8 +32,9 @@ build/
 ### VS Code ###
 .vscode/
 
-# Ignore all application- property files in resources
-/src/main/resources/application-*.properties
+# Ignore all dev and prod property files in resources
+/src/main/resources/application-dev.properties
+/src/main/resources/application-prod.properties
 
 # Ignore logs
 logs/
