@@ -30,14 +30,14 @@ class JwtUtilsTests {
     }
 
     @Test
-    public void testGenerateToken_ShouldGenerateValidToken() {
+    public void testGenerateToken_ShouldGenerateValidToken_WhenUsernameIsProvided() {
         String token = jwtUtils.generateToken(username);
         assertNotNull(token);
         assertTrue(token.startsWith("eyJ"));
     }
 
     @Test
-    public void testValidateToken_ShouldReturnTrueForValidToken() {
+    public void testValidateToken_ShouldReturnTrue_WhenTokenIsValid() {
         String username = "testUser";
         String token = jwtUtils.generateToken(username);
         boolean isValid = jwtUtils.validateToken(token);
@@ -45,14 +45,14 @@ class JwtUtilsTests {
     }
 
     @Test
-    public void testValidateToken_ShouldReturnFalseForInvalidToken() {
+    public void testValidateToken_ShouldReturnFalse_WhenTokenIsInvalid() {
         String invalidToken = "invalid.token";
         boolean isValid = jwtUtils.validateToken(invalidToken);
         assertFalse(isValid);
     }
 
     @Test
-    public void testGetUsernameFromToken_ShouldReturnCorrectUsername() {
+    public void testGetUsernameFromToken_ShouldReturnCorrectUsername_WhenTokenIsValid() {
         String username = "testUser";
         String token = jwtUtils.generateToken(username);
         String extractedUsername = jwtUtils.getUsernameFromToken(token);
@@ -60,7 +60,7 @@ class JwtUtilsTests {
     }
 
     @Test
-    public void testGetUsernameFromToken_ShouldThrowExceptionForInvalidToken() {
+    public void testGetUsernameFromToken_ShouldThrowException_WhenTokenIsInvalid() {
         String invalidToken = "invalid.token";
         assertThrows(io.jsonwebtoken.MalformedJwtException.class, () -> {
             jwtUtils.getUsernameFromToken(invalidToken);

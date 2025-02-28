@@ -55,7 +55,7 @@ public class AuthControllerTests {
     }
 
     @Test
-    void testSignup_Success() {
+    void testSignup_ShouldReturnSuccess_WhenValidUserDTO() {
         when(userService.signup(validUserDTO)).thenReturn(user);
         when(jwtUtils.generateToken(user.getUsername())).thenReturn("jwtToken");
 
@@ -69,7 +69,7 @@ public class AuthControllerTests {
     }
 
     @Test
-    void testSignup_ValidationError() {
+    void testSignup_ShouldReturnValidationError_WhenBindingResultHasErrors() {
         when(bindingResult.hasErrors()).thenReturn(true);
         when(bindingResult.getAllErrors()).thenReturn(Collections.singletonList(new ObjectError("field",
                 "error")));
@@ -82,7 +82,7 @@ public class AuthControllerTests {
     }
 
     @Test
-    void testLogin_Success() {
+    void testLogin_ShouldReturnSuccess_WhenValidLoginDTO() {
         when(userService.login(validLoginDTO)).thenReturn(true);
         when(jwtUtils.generateToken(validLoginDTO.getUsername())).thenReturn("jwtToken");
         when(userService.findByUsername(validLoginDTO.getUsername())).thenReturn(user);
@@ -97,7 +97,7 @@ public class AuthControllerTests {
     }
 
     @Test
-    void testLogin_Failure() {
+    void testLogin_ShouldReturnFailure_WhenLoginFails() {
         when(userService.login(validLoginDTO)).thenReturn(false);
 
         ResponseEntity<Map<String, Object>> response = authController.login(validLoginDTO, bindingResult);
@@ -110,7 +110,7 @@ public class AuthControllerTests {
     }
 
     @Test
-    void testLogin_ValidationError() {
+    void testLogin_ShouldReturnValidationError_WhenBindingResultHasErrors() {
         when(bindingResult.hasErrors()).thenReturn(true);
         when(bindingResult.getAllErrors()).thenReturn(Collections.singletonList(new ObjectError("field",
                 "error")));

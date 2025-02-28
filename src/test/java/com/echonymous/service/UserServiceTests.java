@@ -46,7 +46,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testSignup_ShouldThrowExceptionUsernameAlreadyExists() {
+    public void testSignup_ShouldThrowException_WhenUsernameAlreadyExists() {
         // Arrange
         when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.of(new User()));
 
@@ -56,7 +56,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testSignup_ShouldThrowExceptionEmailAlreadyExists() {
+    public void testSignup_ShouldThrowException_WhenEmailAlreadyExists() {
         when(userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(new User()));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.signup(userDTO));
@@ -64,7 +64,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testSignup_ShouldSignupSuccessfully() {
+    public void testSignup_ShouldSignupSuccessfully_WhenUsernameAndEmailAreAvailable() {
         when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.empty());
         when(userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(userDTO.getPassword())).thenReturn("encodedTestPassword");
@@ -75,12 +75,12 @@ class UserServiceTests {
     }
 
     @Test
-    public void testSignup_ShouldThrowExceptionForNullInput() {
+    public void testSignup_ShouldThrowException_WhenInputIsNull() {
         assertThrows(NullPointerException.class, () -> userService.signup(null));
     }
 
     @Test
-    public void testLogin_ShouldReturnLoginSuccess() {
+    public void testLogin_ShouldReturnTrue_WhenLoginIsSuccessful() {
         // Arrange
         when(userRepository.findByUsername(loginDTO.getUsername())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())).thenReturn(true);
@@ -93,7 +93,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testLogin_ShouldReturnFalseForInvalidUsername() {
+    public void testLogin_ShouldReturnFalse_WhenUsernameIsInvalid() {
         when(userRepository.findByUsername(loginDTO.getUsername())).thenReturn(Optional.empty());
 
         boolean isLoginSuccess = userService.login(loginDTO);
@@ -102,7 +102,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testLogin_ShouldReturnFalseForInvalidPassword() {
+    public void testLogin_ShouldReturnFalse_WhenPasswordIsInvalid() {
         when(userRepository.findByUsername(loginDTO.getUsername())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())).thenReturn(false);
 
@@ -112,7 +112,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testLogin_ShouldReturnFalseForNullCredentials() {
+    public void testLogin_ShouldReturnFalse_WhenCredentialsAreNull() {
         LoginDTO nullLoginDTO = new LoginDTO(null, null);
 
         boolean isLoginSuccess = userService.login(nullLoginDTO);
@@ -121,7 +121,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testLogin_ShouldReturnFalseForEmptyInputFields() {
+    public void testLogin_ShouldReturnFalse_WhenInputFieldsAreEmpty() {
         LoginDTO emptyLoginDTO = new LoginDTO("", "");
 
         boolean isLoginSuccess = userService.login(emptyLoginDTO);
@@ -130,7 +130,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testFindByUsername_ShouldReturnUser() {
+    public void testFindByUsername_ShouldReturnUser_WhenUsernameExists() {
         when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.of(user));
 
         User foundUser = userService.findByUsername(userDTO.getUsername());
@@ -140,7 +140,7 @@ class UserServiceTests {
     }
 
     @Test
-    public void testFindByUsername_ShouldThrowExceptionUserNotFound() {
+    public void testFindByUsername_ShouldThrowException_WhenUserNotFound() {
         when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.findByUsername(userDTO.getUsername()));
