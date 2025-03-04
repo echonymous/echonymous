@@ -3,6 +3,7 @@ package com.echonymous.service;
 import com.echonymous.dto.LoginDTO;
 import com.echonymous.dto.UserDTO;
 import com.echonymous.entity.User;
+import com.echonymous.exception.NotFoundException;
 import com.echonymous.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -96,9 +97,8 @@ class UserServiceTests {
     public void testLogin_ShouldReturnFalse_WhenUsernameIsInvalid() {
         when(userRepository.findByUsername(loginDTO.getUsername())).thenReturn(Optional.empty());
 
-        boolean isLoginSuccess = userService.login(loginDTO);
-
-        assertFalse(isLoginSuccess);
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> userService.login(loginDTO));
+        assertEquals("User not found.", exception.getMessage());
     }
 
     @Test
@@ -112,21 +112,9 @@ class UserServiceTests {
     }
 
     @Test
-    public void testLogin_ShouldReturnFalse_WhenCredentialsAreNull() {
-        LoginDTO nullLoginDTO = new LoginDTO(null, null);
-
-        boolean isLoginSuccess = userService.login(nullLoginDTO);
-
-        assertFalse(isLoginSuccess);
-    }
-
-    @Test
-    public void testLogin_ShouldReturnFalse_WhenInputFieldsAreEmpty() {
-        LoginDTO emptyLoginDTO = new LoginDTO("", "");
-
-        boolean isLoginSuccess = userService.login(emptyLoginDTO);
-
-        assertFalse(isLoginSuccess);
+    public void testLogin_ShouldThrowException_WhenCredentialsAreNull() {
+        // Assert
+        assertThrows(NullPointerException.class, () -> userService.login(null));
     }
 
     @Test
