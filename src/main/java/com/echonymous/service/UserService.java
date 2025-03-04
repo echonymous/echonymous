@@ -3,7 +3,9 @@ package com.echonymous.service;
 import com.echonymous.dto.LoginDTO;
 import com.echonymous.dto.UserDTO;
 import com.echonymous.entity.User;
+import com.echonymous.exception.NotFoundException;
 import com.echonymous.repository.UserRepository;
+import jakarta.validation.ValidationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +24,12 @@ public class UserService {
     public User signup(UserDTO userDTO) {
         Optional<User> existingUserByUsername = userRepository.findByUsername(userDTO.getUsername());
         if (existingUserByUsername.isPresent()) {
-            throw new RuntimeException("Username already exists.");
+            throw new ValidationException("Username already exists.");
         }
 
         Optional<User> existingUserByEmail = userRepository.findByEmail(userDTO.getEmail());
         if (existingUserByEmail.isPresent()) {
-            throw new RuntimeException("Email already exists.");
+            throw new ValidationException("Email already exists.");
         }
 
         User user = new User();
@@ -42,15 +44,16 @@ public class UserService {
     public boolean login(LoginDTO loginDTO) {
         Optional<User> userOpt = userRepository.findByUsername(loginDTO.getUsername());
 
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
-            return passwordEncoder.matches(loginDTO.getPassword(), user.getPassword());
+        if (userOpt.isEmpty()) {
+            throw new NotFoundException("User not found.");
         }
-        return false;
+
+        User user = userOpt.get();
+        return passwordEncoder.matches(loginDTO.getPassword(), user.getPassword());
     }
 
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found."));
+                .orElseThrow(() -> new NotFoundException("User not found."));
     }
 }

@@ -1,8 +1,8 @@
 package com.echonymous.util;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 
 import java.lang.reflect.Field;
 
@@ -10,10 +10,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class JwtUtilsTests {
 
-    @InjectMocks
     private JwtUtils jwtUtils;
 
-    private String username = "testUser";
+    private Long userId = 2L;
 
     @BeforeEach
     public void setUp() throws NoSuchFieldException, IllegalAccessException {
@@ -30,16 +29,15 @@ class JwtUtilsTests {
     }
 
     @Test
-    public void testGenerateToken_ShouldGenerateValidToken_WhenUsernameIsProvided() {
-        String token = jwtUtils.generateToken(username);
+    public void testGenerateToken_ShouldGenerateValidToken_WhenUserIdIsProvided() {
+        String token = jwtUtils.generateToken(userId);
         assertNotNull(token);
-        assertTrue(token.startsWith("eyJ"));
+        assertTrue(token.startsWith("eyJ")); // Check if the token starts with "eyJ" (standard JWT token format)
     }
 
     @Test
     public void testValidateToken_ShouldReturnTrue_WhenTokenIsValid() {
-        String username = "testUser";
-        String token = jwtUtils.generateToken(username);
+        String token = jwtUtils.generateToken(userId);
         boolean isValid = jwtUtils.validateToken(token);
         assertTrue(isValid);
     }
@@ -52,18 +50,47 @@ class JwtUtilsTests {
     }
 
     @Test
-    public void testGetUsernameFromToken_ShouldReturnCorrectUsername_WhenTokenIsValid() {
-        String username = "testUser";
-        String token = jwtUtils.generateToken(username);
-        String extractedUsername = jwtUtils.getUsernameFromToken(token);
-        assertEquals(username, extractedUsername);
+    public void testGetUserIdFromToken_ShouldReturnCorrectUserId_WhenTokenIsValid() {
+        String token = jwtUtils.generateToken(userId);
+        Long extractedUserId = jwtUtils.getUserIdFromToken(token);
+        assertEquals(userId, extractedUserId);
     }
 
     @Test
-    public void testGetUsernameFromToken_ShouldThrowException_WhenTokenIsInvalid() {
+    public void testGetUserIdFromToken_ShouldThrowException_WhenTokenIsInvalid() {
         String invalidToken = "invalid.token";
         assertThrows(io.jsonwebtoken.MalformedJwtException.class, () -> {
-            jwtUtils.getUsernameFromToken(invalidToken);
+            jwtUtils.getUserIdFromToken(invalidToken);
         });
+    }
+
+    @Test
+    public void testExtractJwtFromRequest_ShouldReturnToken_WhenAuthorizationHeaderContainsBearerToken() {
+        // Simulate a HttpServletRequest with an Authorization header
+        HttpServletRequest request = org.mockito.Mockito.mock(HttpServletRequest.class);
+        String bearerToken = "Bearer " + jwtUtils.generateToken(userId);
+        org.mockito.Mockito.when(request.getHeader("Authorization")).thenReturn(bearerToken);
+
+        String token = jwtUtils.extractJwtFromRequest(request);
+        assertNotNull(token);
+        assertTrue(token.startsWith("eyJ"));
+    }
+
+    @Test
+    public void testExtractJwtFromRequest_ShouldReturnNull_WhenAuthorizationHeaderIsMissing() {
+        HttpServletRequest request = org.mockito.Mockito.mock(HttpServletRequest.class);
+        org.mockito.Mockito.when(request.getHeader("Authorization")).thenReturn(null);
+
+        String token = jwtUtils.extractJwtFromRequest(request);
+        assertNull(token);
+    }
+
+    @Test
+    public void testExtractJwtFromRequest_ShouldReturnNull_WhenAuthorizationHeaderDoesNotStartWithBearer() {
+        HttpServletRequest request = org.mockito.Mockito.mock(HttpServletRequest.class);
+        org.mockito.Mockito.when(request.getHeader("Authorization")).thenReturn("Basic some_token");
+
+        String token = jwtUtils.extractJwtFromRequest(request);
+        assertNull(token);
     }
 }
