@@ -1,7 +1,7 @@
 package com.echonymous.service;
 
 import com.echonymous.dto.LoginDTO;
-import com.echonymous.dto.UserDTO;
+import com.echonymous.dto.UserRequestDTO;
 import com.echonymous.entity.User;
 import com.echonymous.exception.NotFoundException;
 import com.echonymous.repository.UserRepository;
@@ -31,13 +31,13 @@ class UserServiceTests {
     @InjectMocks
     UserService userService;
 
-    private UserDTO userDTO;
+    private UserRequestDTO userRequestDTO;
     private LoginDTO loginDTO;
     private User user;
 
     @BeforeEach
     public void setup() {
-        userDTO = new UserDTO("testUser@gmail.com", "testUser", "testPassword123");
+        userRequestDTO = new UserRequestDTO("testUser@gmail.com", "testUser", "testPassword123");
         loginDTO = new LoginDTO("testUser", "testPassword123");
 
         user = new User();
@@ -49,28 +49,28 @@ class UserServiceTests {
     @Test
     public void testSignup_ShouldThrowException_WhenUsernameAlreadyExists() {
         // Arrange
-        when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.of(new User()));
+        when(userRepository.findByUsername(userRequestDTO.getUsername())).thenReturn(Optional.of(new User()));
 
         // Act and Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.signup(userDTO));
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.signup(userRequestDTO));
         assertEquals("Username already exists.", exception.getMessage());
     }
 
     @Test
     public void testSignup_ShouldThrowException_WhenEmailAlreadyExists() {
-        when(userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.of(new User()));
+        when(userRepository.findByEmail(userRequestDTO.getEmail())).thenReturn(Optional.of(new User()));
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.signup(userDTO));
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.signup(userRequestDTO));
         assertEquals("Email already exists.", exception.getMessage());
     }
 
     @Test
     public void testSignup_ShouldSignupSuccessfully_WhenUsernameAndEmailAreAvailable() {
-        when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.empty());
-        when(userRepository.findByEmail(userDTO.getEmail())).thenReturn(Optional.empty());
-        when(passwordEncoder.encode(userDTO.getPassword())).thenReturn("encodedTestPassword");
+        when(userRepository.findByUsername(userRequestDTO.getUsername())).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(userRequestDTO.getEmail())).thenReturn(Optional.empty());
+        when(passwordEncoder.encode(userRequestDTO.getPassword())).thenReturn("encodedTestPassword");
 
-        userService.signup(userDTO);
+        userService.signup(userRequestDTO);
 
         verify(userRepository, times(1)).save(any(User.class));
     }
@@ -119,9 +119,9 @@ class UserServiceTests {
 
     @Test
     public void testFindByUsername_ShouldReturnUser_WhenUsernameExists() {
-        when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(userRequestDTO.getUsername())).thenReturn(Optional.of(user));
 
-        User foundUser = userService.findByUsername(userDTO.getUsername());
+        User foundUser = userService.findByUsername(userRequestDTO.getUsername());
 
         assertNotNull(foundUser);
         assertEquals("testUser", foundUser.getUsername());
@@ -129,9 +129,9 @@ class UserServiceTests {
 
     @Test
     public void testFindByUsername_ShouldThrowException_WhenUserNotFound() {
-        when(userRepository.findByUsername(userDTO.getUsername())).thenReturn(Optional.empty());
+        when(userRepository.findByUsername(userRequestDTO.getUsername())).thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.findByUsername(userDTO.getUsername()));
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> userService.findByUsername(userRequestDTO.getUsername()));
         assertEquals("User not found.", exception.getMessage());
     }
 }

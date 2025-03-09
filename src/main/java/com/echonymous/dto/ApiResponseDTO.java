@@ -16,7 +16,7 @@ public class ApiResponseDTO {
     private boolean success;
     private String details;
     private String token;
-    private Map<String, Object> user;
+    private Map<String, Object> responseData;
 
     public ApiResponseDTO(int status, boolean success, String details) {
         this.status = status;

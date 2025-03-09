@@ -2,7 +2,7 @@ package com.echonymous.controller;
 
 import com.echonymous.dto.ApiResponseDTO;
 import com.echonymous.dto.LoginDTO;
-import com.echonymous.dto.UserDTO;
+import com.echonymous.dto.UserRequestDTO;
 import com.echonymous.entity.User;
 import com.echonymous.service.UserService;
 import com.echonymous.util.JwtUtils;
@@ -30,7 +30,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponseDTO> signup(@Valid @RequestBody UserDTO userDTO, BindingResult bindingResult) {
+    public ResponseEntity<ApiResponseDTO> signup(@Valid @RequestBody UserRequestDTO userRequestDTO, BindingResult bindingResult) {
         // If there are any validation err (empty fields, invalid email, password too short), BindingResult captures them
         if (bindingResult.hasErrors()) {
             return ResponseEntity.status(400).body(
@@ -38,8 +38,8 @@ public class AuthController {
             );
         }
 
-        log.info("Signing up user: {}", userDTO.getUsername());
-        User user = userService.signup(userDTO);
+        log.info("Signing up user: {}", userRequestDTO.getUsername());
+        User user = userService.signup(userRequestDTO);
 
         String token = jwtUtils.generateToken(user.getUserId());
         log.info("JWT Token: {}", token);
