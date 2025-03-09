@@ -1,0 +1,9 @@
+package com.echonymous.repository;
+
+import com.echonymous.entity.Role;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface RoleRepository extends JpaRepository<Role, Long> {
+}

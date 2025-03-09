@@ -1,7 +1,7 @@
 package com.echonymous.service;
 
 import com.echonymous.dto.LoginDTO;
-import com.echonymous.dto.UserDTO;
+import com.echonymous.dto.UserRequestDTO;
 import com.echonymous.entity.User;
 import com.echonymous.exception.NotFoundException;
 import com.echonymous.repository.UserRepository;
@@ -21,21 +21,21 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User signup(UserDTO userDTO) {
-        Optional<User> existingUserByUsername = userRepository.findByUsername(userDTO.getUsername());
+    public User signup(UserRequestDTO userRequestDTO) {
+        Optional<User> existingUserByUsername = userRepository.findByUsername(userRequestDTO.getUsername());
         if (existingUserByUsername.isPresent()) {
             throw new ValidationException("Username already exists.");
         }
 
-        Optional<User> existingUserByEmail = userRepository.findByEmail(userDTO.getEmail());
+        Optional<User> existingUserByEmail = userRepository.findByEmail(userRequestDTO.getEmail());
         if (existingUserByEmail.isPresent()) {
             throw new ValidationException("Email already exists.");
         }
 
         User user = new User();
-        user.setEmail(userDTO.getEmail());
-        user.setUsername(userDTO.getUsername());
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setEmail(userRequestDTO.getEmail());
+        user.setUsername(userRequestDTO.getUsername());
+        user.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
 
         userRepository.save(user);
         return user;

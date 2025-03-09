@@ -2,7 +2,7 @@ package com.echonymous.controller;
 
 import com.echonymous.dto.ApiResponseDTO;
 import com.echonymous.dto.LoginDTO;
-import com.echonymous.dto.UserDTO;
+import com.echonymous.dto.UserRequestDTO;
 import com.echonymous.entity.User;
 import com.echonymous.service.UserService;
 import com.echonymous.util.JwtUtils;
@@ -33,28 +33,28 @@ public class AuthControllerTests {
     @InjectMocks
     private AuthController authController;
 
-    private UserDTO validUserDTO;
+    private UserRequestDTO validUserRequestDTO;
     private LoginDTO validLoginDTO;
     private User user;
 
     @BeforeEach
     void setUp() {
-        validUserDTO = new UserDTO("newUser@gmail.com", "newUser", "validPassword123");
+        validUserRequestDTO = new UserRequestDTO("newUser@gmail.com", "newUser", "validPassword123");
         validLoginDTO = new LoginDTO("newUser", "validPassword123");
 
         user = new User();
         user.setUserId(1L);
-        user.setUsername(validUserDTO.getUsername());
-        user.setEmail(validUserDTO.getEmail());
-        user.setPassword(validUserDTO.getPassword());
+        user.setUsername(validUserRequestDTO.getUsername());
+        user.setEmail(validUserRequestDTO.getEmail());
+        user.setPassword(validUserRequestDTO.getPassword());
     }
 
     @Test
     void testSignup_ShouldReturnSuccess_WhenValidUserDTO() {
-        when(userService.signup(validUserDTO)).thenReturn(user);
+        when(userService.signup(validUserRequestDTO)).thenReturn(user);
         when(jwtUtils.generateToken(user.getUserId())).thenReturn("jwtToken");
 
-        ResponseEntity<ApiResponseDTO> response = authController.signup(validUserDTO, bindingResult);
+        ResponseEntity<ApiResponseDTO> response = authController.signup(validUserRequestDTO, bindingResult);
 
         assertEquals(200, response.getStatusCodeValue());
         assertTrue(response.getBody().isSuccess());
@@ -68,7 +68,7 @@ public class AuthControllerTests {
         // We need to make sure BindingResult has errors
         when(bindingResult.hasErrors()).thenReturn(true);
 
-        ResponseEntity<ApiResponseDTO> response = authController.signup(validUserDTO, bindingResult);
+        ResponseEntity<ApiResponseDTO> response = authController.signup(validUserRequestDTO, bindingResult);
 
         assertEquals(400, response.getStatusCodeValue());
         assertFalse(response.getBody().isSuccess());

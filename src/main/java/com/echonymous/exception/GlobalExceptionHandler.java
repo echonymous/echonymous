@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ApiResponseDTO> handleRuntimeException(RuntimeException ex) {
-        ApiResponseDTO response = new ApiResponseDTO(500, false, "An unexpected error occurred.");
+        ApiResponseDTO response = new ApiResponseDTO(500, false, ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

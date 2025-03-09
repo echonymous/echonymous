@@ -1,7 +1,9 @@
 package com.echonymous.controller;
 
 import com.echonymous.dto.ApiResponseDTO;
+import com.echonymous.dto.FeedResponseDTO;
 import com.echonymous.dto.PostRequestDTO;
+import com.echonymous.dto.TextPostDTO;
 import com.echonymous.entity.Post;
 import com.echonymous.service.PostService;
 import com.echonymous.util.JwtUtils;
@@ -9,6 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -24,7 +29,9 @@ public class PostController {
     }
 
     @PostMapping("/upload-text")
-    public ResponseEntity<ApiResponseDTO> uploadTextPost(@RequestBody PostRequestDTO postRequestDTO, HttpServletRequest request) {
+    public ResponseEntity<ApiResponseDTO> uploadTextPost(
+            @RequestBody PostRequestDTO postRequestDTO, HttpServletRequest request) {
+
         String token = jwtUtils.extractJwtFromRequest(request);
         if (token == null || !jwtUtils.validateToken(token)) {
             log.error("Invalid or missing JWT token.");
@@ -45,7 +52,9 @@ public class PostController {
 
     // Future endpoint for uploading audio posts
     @PostMapping("/upload-audio")
-    public ResponseEntity<ApiResponseDTO> uploadAudioPost(@RequestParam String category, @RequestParam String filePath, HttpServletRequest request) {
+    public ResponseEntity<ApiResponseDTO> uploadAudioPost(
+            @RequestParam String category, @RequestParam String filePath, HttpServletRequest request) {
+
         String token = jwtUtils.extractJwtFromRequest(request);
         if (token == null || !jwtUtils.validateToken(token)) {
             log.error("Invalid or missing JWT token.");
@@ -61,6 +70,30 @@ public class PostController {
         log.info("Audio post successfully created for user: {}", userId);
 
         ApiResponseDTO response = new ApiResponseDTO(200, true, "Upload successful.");
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/text-feed")
+    public ResponseEntity<ApiResponseDTO> getTextFeed(
+            @RequestParam(required = false) String cursor, @RequestParam(defaultValue = "10") int limit,
+            HttpServletRequest request) {
+
+        String token = jwtUtils.extractJwtFromRequest(request);
+        if (token == null || !jwtUtils.validateToken(token)) {
+            log.error("Invalid or missing JWT token.");
+            return ResponseEntity.status(401).body(
+                    new ApiResponseDTO(401, false, "Invalid or missing JWT token.")
+            );
+        }
+
+        FeedResponseDTO<TextPostDTO> feed = postService.getTextFeed(cursor, limit);
+
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("feed", feed);
+
+        ApiResponseDTO response = new ApiResponseDTO(200, true, "Text feed fetched successfully.",
+                null, responseData);
+
         return ResponseEntity.ok(response);
     }
 }
