@@ -45,10 +45,10 @@ public class PostControllerTests {
         userId = 1L;
 
         textPost = new TextPost();
-        textPost.setId(1L);
+        textPost.setPostId(1L);
         textPost.setCategory("Test");
         textPost.setContent("This is a test post.");
-        textPost.setUserId(userId);
+        textPost.setAuthorId(userId);
 
         validToken = "valid-jwt-token";
     }

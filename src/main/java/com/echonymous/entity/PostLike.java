@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class PostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long postLikeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id") // FK post_id point to the PK of Post

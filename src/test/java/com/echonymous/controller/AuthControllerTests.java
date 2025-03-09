@@ -43,7 +43,7 @@ public class AuthControllerTests {
         validLoginDTO = new LoginDTO("newUser", "validPassword123");
 
         user = new User();
-        user.setId(1L);
+        user.setUserId(1L);
         user.setUsername(validUserDTO.getUsername());
         user.setEmail(validUserDTO.getEmail());
         user.setPassword(validUserDTO.getPassword());
@@ -52,7 +52,7 @@ public class AuthControllerTests {
     @Test
     void testSignup_ShouldReturnSuccess_WhenValidUserDTO() {
         when(userService.signup(validUserDTO)).thenReturn(user);
-        when(jwtUtils.generateToken(user.getId())).thenReturn("jwtToken");
+        when(jwtUtils.generateToken(user.getUserId())).thenReturn("jwtToken");
 
         ResponseEntity<ApiResponseDTO> response = authController.signup(validUserDTO, bindingResult);
 
@@ -78,7 +78,7 @@ public class AuthControllerTests {
     @Test
     void testLogin_ShouldReturnSuccess_WhenValidLoginDTO() {
         when(userService.login(validLoginDTO)).thenReturn(true);
-        when(jwtUtils.generateToken(user.getId())).thenReturn("jwtToken");
+        when(jwtUtils.generateToken(user.getUserId())).thenReturn("jwtToken");
         when(userService.findByUsername(validLoginDTO.getUsername())).thenReturn(user);
 
         ResponseEntity<ApiResponseDTO> response = authController.login(validLoginDTO, bindingResult);

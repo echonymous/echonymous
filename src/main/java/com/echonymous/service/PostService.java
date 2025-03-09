@@ -24,7 +24,7 @@ public class PostService {
         TextPost post = new TextPost();
         post.setCategory(category);
         post.setContent(content);
-        post.setUserId(userId);
+        post.setAuthorId(userId);
         post.setCreatedAt(LocalDateTime.now());
 
         return postRepository.save(post);
@@ -35,7 +35,7 @@ public class PostService {
         AudioPost post = new AudioPost();
         post.setCategory(category);
         post.setFilePath(filePath);
-        post.setUserId(userId);
+        post.setAuthorId(userId);
         post.setCreatedAt(LocalDateTime.now());
         return postRepository.save(post);
     }

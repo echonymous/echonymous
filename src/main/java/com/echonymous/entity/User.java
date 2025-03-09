@@ -18,7 +18,7 @@ import lombok.Setter;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long userId;
 
     @Email(message = "Email should be valid.")
     @NotBlank(message = "Email cannot be blank.")
@@ -31,6 +31,6 @@ public class User {
     @Size(min = 8, message = "Password must be at least 8 characters long.")
     private String password;
 
-    // Will add a set of roles later - use annotations to create bridge table - lazy load
+    // Will add a set of roles later - use annotations to create bridge table - eager load
     // Prolly add fields for createdAt, updatedAt
 }

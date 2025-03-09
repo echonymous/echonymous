@@ -41,11 +41,11 @@ public class AuthController {
         log.info("Signing up user: {}", userDTO.getUsername());
         User user = userService.signup(userDTO);
 
-        String token = jwtUtils.generateToken(user.getId());
+        String token = jwtUtils.generateToken(user.getUserId());
         log.info("JWT Token: {}", token);
 
         Map<String, Object> userMap = Map.of(
-                "id", user.getId(),
+                "id", user.getUserId(),
                 "username", user.getUsername()
         );
 
@@ -72,11 +72,11 @@ public class AuthController {
 
             User user = userService.findByUsername(loginDTO.getUsername());
 
-            String token = jwtUtils.generateToken(user.getId());
+            String token = jwtUtils.generateToken(user.getUserId());
             log.info("JWT Token: {}", token);
 
             Map<String, Object> userMap = Map.of(
-                    "id", user.getId(),
+                    "id", user.getUserId(),
                     "username", user.getUsername()
             );
 

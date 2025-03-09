@@ -38,9 +38,9 @@ public class PostServiceTests {
         validTextPost = new TextPost();
         validTextPost.setCategory(category);
         validTextPost.setContent(content);
-        validTextPost.setUserId(userId);
+        validTextPost.setAuthorId(userId);
         validTextPost.setCreatedAt(LocalDateTime.now());
-        validTextPost.setId(1L);
+        validTextPost.setPostId(1L);
     }
 
     @Test
@@ -55,9 +55,9 @@ public class PostServiceTests {
         assertNotNull(savedPost);
         assertEquals(validTextPost.getCategory(), savedPost.getCategory());
         assertEquals(validTextPost.getContent(), savedPost.getContent());
-        assertEquals(validTextPost.getUserId(), savedPost.getUserId());
+        assertEquals(validTextPost.getAuthorId(), savedPost.getAuthorId());
         assertNotNull(savedPost.getCreatedAt());
-        assertEquals(1L, savedPost.getId());
+        assertEquals(1L, savedPost.getPostId());
         verify(postRepository, times(1)).save(any(TextPost.class));
     }
 
