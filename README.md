@@ -18,13 +18,13 @@ Start by cloning the repository to your local machine using the following comman
 1. Open your terminal and run:
 
     ```bash
-    git clone https://github.com/yourusername/yourproject.git
+    git clone https://github.com/echonymous/echonymous.git
     ```
 
 2. Navigate into the project directory:
 
     ```bash
-    cd yourproject
+    cd echonymous
     ```
 
 ## Step 2: Import the Project into IntelliJ IDEA
