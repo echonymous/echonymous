@@ -48,9 +48,17 @@ This project uses different property files for different environments (developme
    # = DATA SOURCE
    # ===============================
    spring.datasource.url=jdbc:postgresql://localhost:5432/echonymous
+   spring.jpa.properties.hibernate.default_schema=echonymous
    spring.datasource.username=postgres
    spring.datasource.password=your_password_here
+   spring.datasource.hikari.auto-commit=false
 
+   # ===============================
+   # = JWT
+   # ===============================
+   jwt.secret=your_jwt_secret
+   jwt.expiration=jwt_expiration_time
+   
    # ===============================
    # = Only for development purposes
    # ===============================
@@ -120,7 +128,12 @@ To set up the database, follow these steps:
 
 ---
 
-### 4. Verify Database Credentials
+### 4. Create the Schema
+   • Right click on the `echonymous` database and create a schema and name it `echonymous`.
+
+---
+
+### 5. Verify Database Credentials
    • Ensure the database URL, username, and password in the `application-dev.properties` file match your local PostgreSQL credentials.
 
 ## Step 7: Build and Run the Application
