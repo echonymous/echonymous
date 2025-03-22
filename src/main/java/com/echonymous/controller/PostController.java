@@ -1,9 +1,6 @@
 package com.echonymous.controller;
 
-import com.echonymous.dto.ApiResponseDTO;
-import com.echonymous.dto.FeedResponseDTO;
-import com.echonymous.dto.PostRequestDTO;
-import com.echonymous.dto.TextPostDTO;
+import com.echonymous.dto.*;
 import com.echonymous.entity.Post;
 import com.echonymous.service.PostService;
 import com.echonymous.util.JwtUtils;
@@ -110,12 +107,13 @@ public class PostController {
         }
 
         Long userId = jwtUtils.getUserIdFromToken(token);
-        int updatedLikeCount = postService.toggleLike(postId, userId);
+        ToggleLikeResultDTO result = postService.toggleLike(postId, userId);
+        String details = result.isLiked() ? "Liked successfully" : "Disliked successfully";
 
         Map<String, Object> responseData = new HashMap<>();
-        responseData.put("likeCount", updatedLikeCount);
+        responseData.put("likeCount", result.getLikeCount());
 
-        ApiResponseDTO response = new ApiResponseDTO(200, true, "Like toggled successfully.",
+        ApiResponseDTO response = new ApiResponseDTO(200, true, details,
                 null, responseData);
 
         return ResponseEntity.ok(response);

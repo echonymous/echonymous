@@ -2,6 +2,7 @@ package com.echonymous.service;
 
 import com.echonymous.dto.FeedResponseDTO;
 import com.echonymous.dto.TextPostDTO;
+import com.echonymous.dto.ToggleLikeResultDTO;
 import com.echonymous.entity.*;
 import com.echonymous.repository.PostLikeRepository;
 import com.echonymous.repository.PostRepository;
@@ -94,16 +95,19 @@ public class PostService {
     }
 
     @Transactional
-    public int toggleLike(Long postId, Long userId) {
+    public ToggleLikeResultDTO toggleLike(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found!"));
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found!"));
 
+        boolean isLiked;
+
         Optional<PostLike> existingLike = postLikeRepository.findByPostAndUser(post, user);
         if (existingLike.isPresent()) {
             // If the like exists, delete it (i.e. user unlikes)
             postLikeRepository.delete(existingLike.get());
+            isLiked = false;
             log.info("User {} unliked post {}", userId, postId);
         } else {
             // If no like exists, create a new like record
@@ -112,9 +116,11 @@ public class PostService {
             like.setUser(user);
             like.setLikedAt(LocalDateTime.now());
             postLikeRepository.save(like);
+            isLiked = true;
             log.info("User {} liked post {}", userId, postId);
         }
-        // Return the updated like count
-        return postLikeRepository.countByPost(post);
+        // Return the updated like count and the like action
+        int updatedLikeCount = postLikeRepository.countByPost(post);
+        return new ToggleLikeResultDTO(isLiked, updatedLikeCount);
     }
 }
