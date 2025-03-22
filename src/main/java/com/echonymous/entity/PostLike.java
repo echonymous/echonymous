@@ -22,5 +22,7 @@ public class PostLike {
     @JoinColumn(name = "user_id") // FK user_id point to the PK of User
     private User user;
 
-    private LocalDateTime likedAt;
+    private LocalDateTime likedAt; // maybe we dont need this - then will remove
+
+    private Boolean isLike;
 }
