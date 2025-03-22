@@ -88,7 +88,13 @@ public class PostService {
         }
 
         List<TextPostDTO> postDTOs = posts.stream()
-                .map(post -> new TextPostDTO(post.getPostId(), post.getCategory(), post.getContent(), post.getCreatedAt()))
+                .map(post -> new TextPostDTO(
+                        post.getPostId(),
+                        post.getCategory(),
+                        post.getContent(),
+                        post.getCreatedAt(),
+                        postLikeRepository.countByPost(post)
+                ))
                 .collect(Collectors.toList());
 
         return new FeedResponseDTO<>(postDTOs, nextCursor, hasNext);

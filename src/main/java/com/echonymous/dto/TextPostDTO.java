@@ -16,6 +16,6 @@ public class TextPostDTO {
     private String category;
     private String content;
     private LocalDateTime createdAt;
-    //private UserResponseDTO user;
-    //private EngagementDTO engagementDTO;
+    private int likeCount;
+
 }
