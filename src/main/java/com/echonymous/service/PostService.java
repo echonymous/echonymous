@@ -2,11 +2,11 @@ package com.echonymous.service;
 
 import com.echonymous.dto.FeedResponseDTO;
 import com.echonymous.dto.TextPostDTO;
-import com.echonymous.entity.AudioPost;
-import com.echonymous.entity.Post;
-import com.echonymous.entity.TextPost;
+import com.echonymous.entity.*;
+import com.echonymous.repository.PostLikeRepository;
 import com.echonymous.repository.PostRepository;
 import com.echonymous.repository.TextPostRepository;
+import com.echonymous.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,10 +25,14 @@ import java.util.stream.Collectors;
 public class PostService {
     private final PostRepository postRepository;
     private final TextPostRepository textPostRepository;
+    private final PostLikeRepository postLikeRepository;
+    private final UserRepository userRepository;
 
-    public PostService(PostRepository postRepository, TextPostRepository textPostRepository) {
+    public PostService(PostRepository postRepository, TextPostRepository textPostRepository, PostLikeRepository postLikeRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.textPostRepository = textPostRepository;
+        this.postLikeRepository = postLikeRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -86,5 +91,30 @@ public class PostService {
                 .collect(Collectors.toList());
 
         return new FeedResponseDTO<>(postDTOs, nextCursor, hasNext);
+    }
+
+    @Transactional
+    public int toggleLike(Long postId, Long userId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found!"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found!"));
+
+        Optional<PostLike> existingLike = postLikeRepository.findByPostAndUser(post, user);
+        if (existingLike.isPresent()) {
+            // If the like exists, delete it (i.e. user unlikes)
+            postLikeRepository.delete(existingLike.get());
+            log.info("User {} unliked post {}", userId, postId);
+        } else {
+            // If no like exists, create a new like record
+            PostLike like = new PostLike();
+            like.setPost(post);
+            like.setUser(user);
+            like.setLikedAt(LocalDateTime.now());
+            postLikeRepository.save(like);
+            log.info("User {} liked post {}", userId, postId);
+        }
+        // Return the updated like count
+        return postLikeRepository.countByPost(post);
     }
 }

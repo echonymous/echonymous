@@ -96,4 +96,29 @@ public class PostController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<ApiResponseDTO> toggleLike(
+            @PathVariable Long postId, HttpServletRequest request) {
+
+        String token = jwtUtils.extractJwtFromRequest(request);
+        if (token == null || !jwtUtils.validateToken(token)) {
+            log.error("Invalid or missing JWT token.");
+            return ResponseEntity.status(401).body(
+                    new ApiResponseDTO(401, false, "Invalid or missing JWT token.")
+            );
+        }
+
+        Long userId = jwtUtils.getUserIdFromToken(token);
+        int updatedLikeCount = postService.toggleLike(postId, userId);
+
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("likeCount", updatedLikeCount);
+
+        ApiResponseDTO response = new ApiResponseDTO(200, true, "Like toggled successfully.",
+                null, responseData);
+
+        return ResponseEntity.ok(response);
+    }
+
 }

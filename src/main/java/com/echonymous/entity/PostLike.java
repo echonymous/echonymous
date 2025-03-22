@@ -24,5 +24,4 @@ public class PostLike {
 
     private LocalDateTime likedAt; // maybe we dont need this - then will remove
 
-    private Boolean isLike;
 }
