@@ -40,9 +40,9 @@ public class SecurityConfig {
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration corsConfig = new org.springframework.web.cors.CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("*")); // Allowing all origins for testing
+        corsConfig.setAllowedOrigins(List.of("http://localhost:3000", "http://74.207.228.224:3000/")); // Allowing these origins for testing
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        corsConfig.setAllowedHeaders(List.of("*")); // Allowing all headers for testing. Later will change to specific like Authorization and Content-Type
+        corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         corsConfig.setAllowCredentials(true);
 
         org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
