@@ -1,9 +1,7 @@
 package com.echonymous.util;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
+import com.echonymous.dto.ApiResponseDTO;
+import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,11 +36,12 @@ public class JwtUtils {
 
             Date expirationDate = claims.getExpiration();
             if (expirationDate.before(new Date())) {
-                return false; // Token is expired
+                //return false; // Token is expired
+                throw new ExpiredJwtException(null, claims, "Token is expired");
             }
             log.debug("Token in valid.");
             return true;
-        } catch (Exception e) {
+        } catch (ExpiredJwtException e) {
             log.error("JWT token validation failed: {}", e.getMessage());
             return false;
         }

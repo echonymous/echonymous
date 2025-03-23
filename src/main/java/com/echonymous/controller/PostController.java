@@ -2,6 +2,7 @@ package com.echonymous.controller;
 
 import com.echonymous.dto.*;
 import com.echonymous.entity.Post;
+import com.echonymous.entity.User;
 import com.echonymous.service.PostService;
 import com.echonymous.util.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -83,7 +84,8 @@ public class PostController {
             );
         }
 
-        FeedResponseDTO<TextPostDTO> feed = postService.getTextFeed(cursor, limit);
+        Long currentUserId = jwtUtils.getUserIdFromToken(token);
+        FeedResponseDTO<TextPostDTO> feed = postService.getTextFeed(cursor, limit, currentUserId);
 
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("feed", feed);

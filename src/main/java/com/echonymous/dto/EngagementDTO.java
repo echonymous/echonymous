@@ -10,6 +10,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EngagementDTO {
-    private int likeCount;
-    private int commentCount;
+    private int likesCount;
+    private int commentsCount;
+    private boolean isLiked;
+    private boolean isEchoed;
+
 }
