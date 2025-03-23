@@ -1,5 +1,6 @@
 package com.echonymous.service;
 
+import com.echonymous.dto.EngagementDTO;
 import com.echonymous.dto.FeedResponseDTO;
 import com.echonymous.dto.TextPostDTO;
 import com.echonymous.dto.ToggleLikeResultDTO;
@@ -58,7 +59,7 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public FeedResponseDTO<TextPostDTO> getTextFeed(String cursor, int limit) {
+    public FeedResponseDTO<TextPostDTO> getTextFeed(String cursor, int limit, Long currentUserId) {
         LocalDateTime cursorDate = null;
         if (cursor != null && !cursor.isEmpty()) {
             try {
@@ -87,15 +88,20 @@ public class PostService {
             nextCursor = lastCreatedAt.toString();
         }
 
-        List<TextPostDTO> postDTOs = posts.stream()
-                .map(post -> new TextPostDTO(
-                        post.getPostId(),
-                        post.getCategory(),
-                        post.getContent(),
-                        post.getCreatedAt(),
-                        postLikeRepository.countByPost(post)
-                ))
-                .collect(Collectors.toList());
+        List<TextPostDTO> postDTOs = posts.stream().map(post -> {
+            int likesCount = postLikeRepository.countByPost(post);
+            boolean isLiked = postLikeRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
+            // For now, commentsCount and isEchoed are not implemented
+            EngagementDTO engagement = new EngagementDTO(likesCount, 0, isLiked, false);
+
+            return new TextPostDTO(
+                    post.getPostId(),
+                    post.getCategory(),
+                    post.getContent(),
+                    post.getCreatedAt(),
+                    engagement
+            );
+        }).collect(Collectors.toList());
 
         return new FeedResponseDTO<>(postDTOs, nextCursor, hasNext);
     }
