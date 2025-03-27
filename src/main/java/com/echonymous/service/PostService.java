@@ -5,10 +5,7 @@ import com.echonymous.dto.FeedResponseDTO;
 import com.echonymous.dto.TextPostDTO;
 import com.echonymous.dto.ToggleLikeResultDTO;
 import com.echonymous.entity.*;
-import com.echonymous.repository.PostLikeRepository;
-import com.echonymous.repository.PostRepository;
-import com.echonymous.repository.TextPostRepository;
-import com.echonymous.repository.UserRepository;
+import com.echonymous.repository.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +25,14 @@ public class PostService {
     private final PostRepository postRepository;
     private final TextPostRepository textPostRepository;
     private final PostLikeRepository postLikeRepository;
+    private final PostCommentRepository postCommentRepository;
     private final UserRepository userRepository;
 
-    public PostService(PostRepository postRepository, TextPostRepository textPostRepository, PostLikeRepository postLikeRepository, UserRepository userRepository) {
+    public PostService(PostRepository postRepository, TextPostRepository textPostRepository, PostLikeRepository postLikeRepository, CommentLikeRepository commentLikeRepository, PostCommentRepository postCommentRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.textPostRepository = textPostRepository;
         this.postLikeRepository = postLikeRepository;
+        this.postCommentRepository = postCommentRepository;
         this.userRepository = userRepository;
     }
 
@@ -90,9 +89,10 @@ public class PostService {
 
         List<TextPostDTO> postDTOs = posts.stream().map(post -> {
             int likesCount = postLikeRepository.countByPost(post);
+            int commentsCount = postCommentRepository.countByPost(post);
             boolean isLiked = postLikeRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
             // For now, commentsCount and isEchoed are not implemented
-            EngagementDTO engagement = new EngagementDTO(likesCount, 0, isLiked, false);
+            EngagementDTO engagement = new EngagementDTO(likesCount, commentsCount, isLiked, false);
 
             return new TextPostDTO(
                     post.getPostId(),

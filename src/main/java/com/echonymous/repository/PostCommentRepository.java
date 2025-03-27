@@ -22,4 +22,6 @@ public interface PostCommentRepository extends JpaRepository<PostComment, Long> 
 
     // For replies without a cursor
     List<PostComment> findByParentCommentOrderByCreatedAtDesc(PostComment parentComment, Pageable pageable);
+
+    int countByPost(Post post);
 }
