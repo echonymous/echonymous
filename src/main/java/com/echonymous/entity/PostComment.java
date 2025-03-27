@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -23,5 +24,15 @@ public class PostComment {
     private User user;
 
     private String comment;
-    private LocalDateTime commentedAt;
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    // Self-referencing for nested replies. For top-level comments, this is null.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_comment_id")
+    private PostComment parentComment;
+
+    @OneToMany(mappedBy = "parentComment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PostComment> replies;
 }

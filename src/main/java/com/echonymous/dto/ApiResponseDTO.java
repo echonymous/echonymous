@@ -23,4 +23,11 @@ public class ApiResponseDTO {
         this.success = success;
         this.details = details;
     }
+
+    public ApiResponseDTO(int status, boolean success, String details, Map<String, Object> responseData) {
+        this.status = status;
+        this.success = success;
+        this.details = details;
+        this.responseData = responseData;
+    }
 }

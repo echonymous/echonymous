@@ -109,9 +109,9 @@ public class PostService {
     @Transactional
     public ToggleLikeResultDTO toggleLike(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found!"));
+                .orElseThrow(() -> new RuntimeException("Post not found."));
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found!"));
+                .orElseThrow(() -> new RuntimeException("User not found."));
 
         boolean isLiked;
 

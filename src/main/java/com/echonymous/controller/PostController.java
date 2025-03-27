@@ -91,7 +91,7 @@ public class PostController {
         responseData.put("feed", feed);
 
         ApiResponseDTO response = new ApiResponseDTO(200, true, "Text feed fetched successfully.",
-                null, responseData);
+                responseData);
 
         return ResponseEntity.ok(response);
     }
@@ -115,8 +115,7 @@ public class PostController {
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("likeCount", result.getLikeCount());
 
-        ApiResponseDTO response = new ApiResponseDTO(200, true, details,
-                null, responseData);
+        ApiResponseDTO response = new ApiResponseDTO(200, true, details, responseData);
 
         return ResponseEntity.ok(response);
     }
