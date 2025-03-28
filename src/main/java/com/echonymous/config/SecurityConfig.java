@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .and()
                 .csrf().disable() // Disable CSRF for simplicity
                 .authorizeRequests()
-                .requestMatchers("/auth/**").permitAll()  // Allow public access to certain endpoints
+                .requestMatchers("/api/auth/**").permitAll()  // Allow public access to certain endpoints
                 .anyRequest().authenticated() // Require authentication for other requests
                 .and()
                 .addFilterBefore(new JwtAuthFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class); // Add the JWT filter before the default Spring Security filter
