@@ -15,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @Slf4j
-@RequestMapping("/comments")
+@RequestMapping("/api/comments")
 public class CommentController {
     private final CommentService commentService;
     private final JwtUtils jwtUtils;
