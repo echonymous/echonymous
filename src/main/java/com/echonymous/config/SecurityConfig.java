@@ -13,6 +13,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.util.List;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -22,15 +24,29 @@ public class SecurityConfig {
         this.jwtUtils = jwtUtils;
     }
 
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .cors()
+//                .and()
+//                .csrf().disable() // Disable CSRF for simplicity
+//                .authorizeRequests()
+//                .requestMatchers("/api/auth/**").permitAll()  // Allow public access to certain endpoints
+//                .anyRequest().authenticated() // Require authentication for other requests
+//                .and()
+//                .addFilterBefore(new JwtAuthFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class); // Add the JWT filter before the default Spring Security filter
+//
+//        return http.build();
+//    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors()
-                .and()
+                .cors(withDefaults())
                 .csrf().disable() // Disable CSRF for simplicity
                 .authorizeRequests()
-                .requestMatchers("/api/auth/**").permitAll()  // Allow public access to certain endpoints
-                .anyRequest().authenticated() // Require authentication for other requests
+                .requestMatchers("/api/auth/**").permitAll() // Allow public access to certain endpoints
+                .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class); // Add the JWT filter before the default Spring Security filter
 
@@ -40,9 +56,15 @@ public class SecurityConfig {
     @Bean
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration corsConfig = new org.springframework.web.cors.CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("http://localhost:3000", "http://74.207.228.224:3000/")); // Allowing these origins for testing
+        corsConfig.setAllowedOrigins(List.of(
+                "http://localhost:3000",
+                "http://74.207.228.224:3000",
+                "https://74.207.228.224:443",
+                "http://www.echonymous.com",
+                "https://www.echonymous.com")
+        ); // Allowing these origins for testing
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        corsConfig.setAllowedHeaders(List.of("*"));
         corsConfig.setAllowCredentials(true);
 
         org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
