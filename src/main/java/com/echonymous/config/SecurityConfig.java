@@ -24,21 +24,6 @@ public class SecurityConfig {
         this.jwtUtils = jwtUtils;
     }
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//                .cors()
-//                .and()
-//                .csrf().disable() // Disable CSRF for simplicity
-//                .authorizeRequests()
-//                .requestMatchers("/api/auth/**").permitAll()  // Allow public access to certain endpoints
-//                .anyRequest().authenticated() // Require authentication for other requests
-//                .and()
-//                .addFilterBefore(new JwtAuthFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class); // Add the JWT filter before the default Spring Security filter
-//
-//        return http.build();
-//    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -51,26 +36,6 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtAuthFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class); // Add the JWT filter before the default Spring Security filter
 
         return http.build();
-    }
-
-    @Bean
-    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
-        org.springframework.web.cors.CorsConfiguration corsConfig = new org.springframework.web.cors.CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of(
-                "http://localhost:3000",        // Local development
-                "http://74.207.228.224:3000",   // Local development
-                "http://www.echonymous.com",    // Production domain
-                "https://www.echonymous.com",   // Production domain
-                "http://echonymous.com",        // Production domain
-                "https://echonymous.com"       // Production domain
-        ));
-        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        corsConfig.setAllowedHeaders(List.of("*"));
-        corsConfig.setAllowCredentials(true);
-
-        org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfig); // Apply it to all endpoints
-        return source;
     }
 
     @Bean
