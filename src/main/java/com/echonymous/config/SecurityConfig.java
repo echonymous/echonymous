@@ -57,12 +57,13 @@ public class SecurityConfig {
     public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
         org.springframework.web.cors.CorsConfiguration corsConfig = new org.springframework.web.cors.CorsConfiguration();
         corsConfig.setAllowedOrigins(List.of(
-                "http://localhost:3000",
-                "http://74.207.228.224:3000",
-                "https://74.207.228.224:443",
-                "http://www.echonymous.com",
-                "https://www.echonymous.com")
-        ); // Allowing these origins for testing
+                "http://localhost:3000",        // Local development
+                "http://74.207.228.224:3000",   // Local development
+                "http://www.echonymous.com",    // Production domain
+                "https://www.echonymous.com",   // Production domain
+                "http://echonymous.com",        // Production domain
+                "https://echonymous.com"       // Production domain
+        ));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(List.of("*"));
         corsConfig.setAllowCredentials(true);
