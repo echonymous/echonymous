@@ -1,9 +1,6 @@
 package com.echonymous.service;
 
-import com.echonymous.dto.EngagementDTO;
-import com.echonymous.dto.FeedResponseDTO;
-import com.echonymous.dto.TextPostDTO;
-import com.echonymous.dto.ToggleLikeResultDTO;
+import com.echonymous.dto.*;
 import com.echonymous.entity.*;
 import com.echonymous.repository.*;
 import jakarta.transaction.Transactional;
@@ -26,13 +23,15 @@ public class PostService {
     private final TextPostRepository textPostRepository;
     private final PostLikeRepository postLikeRepository;
     private final PostCommentRepository postCommentRepository;
+    private final PostEchoRepository postEchoRepository;
     private final UserRepository userRepository;
 
-    public PostService(PostRepository postRepository, TextPostRepository textPostRepository, PostLikeRepository postLikeRepository, CommentLikeRepository commentLikeRepository, PostCommentRepository postCommentRepository, UserRepository userRepository) {
+    public PostService(PostRepository postRepository, TextPostRepository textPostRepository, PostLikeRepository postLikeRepository, CommentLikeRepository commentLikeRepository, PostCommentRepository postCommentRepository, PostEchoRepository postEchoRepository, UserRepository userRepository) {
         this.postRepository = postRepository;
         this.textPostRepository = textPostRepository;
         this.postLikeRepository = postLikeRepository;
         this.postCommentRepository = postCommentRepository;
+        this.postEchoRepository = postEchoRepository;
         this.userRepository = userRepository;
     }
 
@@ -90,9 +89,11 @@ public class PostService {
         List<TextPostDTO> postDTOs = posts.stream().map(post -> {
             int likesCount = postLikeRepository.countByPost(post);
             int commentsCount = postCommentRepository.countByPost(post);
+            int echoesCount = postEchoRepository.countByPost(post);
             boolean isLiked = postLikeRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
-            // For now, commentsCount and isEchoed are not implemented
-            EngagementDTO engagement = new EngagementDTO(likesCount, commentsCount, isLiked, false);
+            boolean isEchoed = postEchoRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
+
+            EngagementDTO engagement = new EngagementDTO(likesCount, commentsCount, echoesCount, isLiked, isEchoed);
 
             return new TextPostDTO(
                     post.getPostId(),
@@ -134,5 +135,35 @@ public class PostService {
         // Return the updated like count and the like action
         int updatedLikeCount = postLikeRepository.countByPost(post);
         return new ToggleLikeResultDTO(isLiked, updatedLikeCount);
+    }
+
+    @Transactional
+    public ToggleEchoResultDTO toggleEcho(Long postId, Long userId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found."));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found."));
+
+        boolean isEchoed;
+
+        Optional<PostEcho> existingEcho = postEchoRepository.findByPostAndUser(post, user);
+        if (existingEcho.isPresent()) {
+            // If the echo exists, delete it (i.e. user unechoes)
+            postEchoRepository.delete(existingEcho.get());
+            isEchoed = false;
+            log.info("User {} unechoed post {}", userId, postId);
+        } else {
+            // If no echo exists, create a new echo record
+            PostEcho echo = new PostEcho();
+            echo.setPost(post);
+            echo.setUser(user);
+            echo.setEchoedAt(LocalDateTime.now());
+            postEchoRepository.save(echo);
+            isEchoed = true;
+            log.info("User {} echoed post {}", userId, postId);
+        }
+        // Return the updated echo count and the echo action
+        int updatedEchoCount = postEchoRepository.countByPost(post);
+        return new ToggleEchoResultDTO(isEchoed, updatedEchoCount);
     }
 }

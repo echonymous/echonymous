@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ToggleLikeResultDTO {
-    private boolean isLiked;    // true for like, false for dislike
-    private int likesCount;
+public class ToggleEchoResultDTO {
+    private boolean isEchoed;
+    private int echoesCount;
 }

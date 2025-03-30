@@ -113,7 +113,31 @@ public class PostController {
         String details = result.isLiked() ? "Liked successfully" : "Disliked successfully";
 
         Map<String, Object> responseData = new HashMap<>();
-        responseData.put("likeCount", result.getLikeCount());
+        responseData.put("likesCount", result.getLikesCount());
+
+        ApiResponseDTO response = new ApiResponseDTO(200, true, details, responseData);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/{postId}/echo")
+    public ResponseEntity<ApiResponseDTO> toggleEcho(
+            @PathVariable Long postId, HttpServletRequest request) {
+
+        String token = jwtUtils.extractJwtFromRequest(request);
+        if (token == null || !jwtUtils.validateToken(token)) {
+            log.error("Invalid or missing JWT token.");
+            return ResponseEntity.status(401).body(
+                    new ApiResponseDTO(401, false, "Invalid or missing JWT token.")
+            );
+        }
+
+        Long userId = jwtUtils.getUserIdFromToken(token);
+        ToggleEchoResultDTO result = postService.toggleEcho(postId, userId);
+        String details = result.isEchoed() ? "Echoed successfully" : "Unechoed successfully";
+
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("echoesCount", result.getEchoesCount());
 
         ApiResponseDTO response = new ApiResponseDTO(200, true, details, responseData);
 

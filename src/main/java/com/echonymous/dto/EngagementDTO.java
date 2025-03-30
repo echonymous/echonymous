@@ -12,6 +12,7 @@ import lombok.Setter;
 public class EngagementDTO {
     private int likesCount;
     private int commentsCount;
+    private int echoesCount;
     private boolean isLiked;
     private boolean isEchoed;
 
