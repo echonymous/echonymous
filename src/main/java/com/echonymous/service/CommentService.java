@@ -1,6 +1,7 @@
 package com.echonymous.service;
 
 import com.echonymous.dto.CommentDTO;
+import com.echonymous.dto.FeedResponseDTO;
 import com.echonymous.entity.CommentLike;
 import com.echonymous.entity.Post;
 import com.echonymous.entity.PostComment;
@@ -93,7 +94,7 @@ public class CommentService {
         postCommentRepository.delete(comment);
     }
 
-    public List<CommentDTO> getCommentsForPost(Long postId, String cursor, int limit,  Long currentUserId) {
+    public FeedResponseDTO<CommentDTO> getCommentsForPost(Long postId, String cursor, int limit,  Long currentUserId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found."));
 
@@ -115,13 +116,21 @@ public class CommentService {
         if (hasNext) {
             comments = comments.subList(0, limit);
         }
+        // Next cursor is the createdAt of the last post in the list
+        String nextCursor = null;
+        if (!comments.isEmpty()) {
+            LocalDateTime lastCreatedAt = comments.get(comments.size() - 1).getCreatedAt();
+            nextCursor = lastCreatedAt.toString();
+        }
 
-        return comments.stream()
+        List<CommentDTO> commentDTOs = comments.stream()
                 .map(comment -> mapToCommentDTO(comment, currentUserId))
                 .collect(Collectors.toList());
+
+        return new FeedResponseDTO<>(commentDTOs, nextCursor, hasNext);
     }
 
-    public List<CommentDTO> getRepliesForComment(Long commentId, String cursor, int limit, Long currentUserId) {
+    public FeedResponseDTO<CommentDTO> getRepliesForComment(Long commentId, String cursor, int limit, Long currentUserId) {
         PostComment parent = postCommentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found."));
 
@@ -143,9 +152,17 @@ public class CommentService {
             replies = replies.subList(0, limit);
         }
 
-        return replies.stream()
+        String nextCursor = null;
+        if (!replies.isEmpty()) {
+            LocalDateTime lastCreatedAt = replies.get(replies.size() - 1).getCreatedAt();
+            nextCursor = lastCreatedAt.toString();
+        }
+
+        List<CommentDTO> repliesDTOs = replies.stream()
                 .map(reply -> mapToCommentDTO(reply, currentUserId))
                 .collect(Collectors.toList());
+
+        return new FeedResponseDTO<>(repliesDTOs, nextCursor, hasNext);
     }
 
     @Transactional

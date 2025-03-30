@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FeedResponseDTO<T> {
-    private List<T> posts;
+    private List<T> content; // Using it for posts, comments, replies
     private String nextCursor;
     private boolean hasNext;
 }

@@ -2,6 +2,7 @@ package com.echonymous.controller;
 
 import com.echonymous.dto.ApiResponseDTO;
 import com.echonymous.dto.CommentDTO;
+import com.echonymous.dto.FeedResponseDTO;
 import com.echonymous.service.CommentService;
 import com.echonymous.util.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -97,7 +98,7 @@ public class CommentController {
         }
 
         Long currentUserId = jwtUtils.getUserIdFromToken(token);
-        List<CommentDTO> comments = commentService.getCommentsForPost(postId, cursor, limit, currentUserId);
+        FeedResponseDTO<CommentDTO> comments = commentService.getCommentsForPost(postId, cursor, limit, currentUserId);
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("comments", comments);
         ApiResponseDTO response = new ApiResponseDTO(200, true,
@@ -117,7 +118,7 @@ public class CommentController {
                     .body(new ApiResponseDTO(401, false, "Invalid or missing JWT token."));
         }
         Long currentUserId = jwtUtils.getUserIdFromToken(token);
-        List<CommentDTO> replies = commentService.getRepliesForComment(commentId, cursor, limit, currentUserId);
+        FeedResponseDTO<CommentDTO> replies = commentService.getRepliesForComment(commentId, cursor, limit, currentUserId);
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("replies", replies);
         ApiResponseDTO response = new ApiResponseDTO(200, true,
