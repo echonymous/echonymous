@@ -202,4 +202,52 @@ public class PostService {
         int updatedEchoCount = postEchoRepository.countByPost(post);
         return new ToggleEchoResultDTO(isEchoed, updatedEchoCount);
     }
+
+    public FeedResponseDTO<TextPostDTO> getEchoedTextPosts(Long userId, int limit, String cursor) {
+        LocalDateTime cursorDate = null;
+        if (cursor != null && !cursor.isEmpty()) {
+            try {
+                // Expecting the cursor in ISO_LOCAL_DATE_TIME format.
+                cursorDate = LocalDateTime.parse(cursor);
+            } catch (DateTimeParseException e) {
+                throw new ValidationException("Invalid cursor format. Expected ISO_LOCAL_DATE_TIME.");
+            }
+        }
+        // Request one extra record to determine if there's a next page.
+        Pageable pageable = PageRequest.of(0, limit + 1);
+        List<PostEcho> echoes;
+        if (cursorDate != null) {
+            echoes = postEchoRepository.findTextPostEchoedByUserBefore(userId, cursorDate, pageable);
+        } else {
+            echoes = postEchoRepository.findTextPostEchoedByUser(userId, pageable);
+        }
+        boolean hasNext = echoes.size() > limit;
+        if (hasNext) {
+            echoes = echoes.subList(0, limit);
+        }
+        // The next cursor is the echoedAt of the last PostEcho.
+        String nextCursor = null;
+        if (!echoes.isEmpty()) {
+            LocalDateTime lastEchoedAt = echoes.get(echoes.size() - 1).getEchoedAt();
+            nextCursor = lastEchoedAt.toString();
+        }
+        // Map each PostEcho to a TextPostDTO.
+        List<TextPostDTO> postDTOs = echoes.stream().map(echo -> {
+            TextPost textPost = (TextPost) echo.getPost(); // safe cast due to TYPE filtering
+            int likesCount = postLikeRepository.countByPost(textPost);
+            int commentsCount = postCommentRepository.countByPost(textPost);
+            int echoesCount = postEchoRepository.countByPost(textPost);
+            boolean isLiked = postLikeRepository.findByPostAndUser_UserId(textPost, userId).isPresent();
+            // As these are echoed posts, set isEchoed to true.
+            EngagementDTO engagement = new EngagementDTO(likesCount, commentsCount, echoesCount, isLiked, true);
+            return new TextPostDTO(
+                    textPost.getPostId(),
+                    textPost.getCategory(),
+                    textPost.getContent(),
+                    textPost.getCreatedAt(),
+                    engagement
+            );
+        }).collect(Collectors.toList());
+        return new FeedResponseDTO<>(postDTOs, nextCursor, hasNext);
+    }
 }
