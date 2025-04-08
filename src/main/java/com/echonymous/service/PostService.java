@@ -57,7 +57,7 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public FeedResponseDTO<TextPostDTO> getTextFeed(String cursor, int limit, Long currentUserId) {
+    public FeedResponseDTO<TextPostDTO> getTextFeed(String cursor, int limit, Long currentUserId, String category) {
         LocalDateTime cursorDate = null;
         if (cursor != null && !cursor.isEmpty()) {
             try {
@@ -70,11 +70,21 @@ public class PostService {
         // Request one extra record to determine if there's a next page
         Pageable pageable = PageRequest.of(0, limit + 1);
         List<TextPost> posts;
-        if (cursorDate != null) {
-            posts = textPostRepository.findByCreatedAtBeforeOrderByCreatedAtDesc(cursorDate, pageable);
+
+        if (!"all".equalsIgnoreCase(category)) {
+            if (cursorDate != null) {
+                posts = textPostRepository.findByCategoryIgnoreCaseAndCreatedAtBeforeOrderByCreatedAtDesc(category, cursorDate, pageable);
+            } else {
+                posts = textPostRepository.findByCategoryIgnoreCaseOrderByCreatedAtDesc(category, pageable);
+            }
         } else {
-            posts = textPostRepository.findAllByOrderByCreatedAtDesc(pageable);
+            if (cursorDate != null) {
+                posts = textPostRepository.findByCreatedAtBeforeOrderByCreatedAtDesc(cursorDate, pageable);
+            } else {
+                posts = textPostRepository.findAllByOrderByCreatedAtDesc(pageable);
+            }
         }
+
         boolean hasNext = posts.size() > limit;
         if (hasNext) {
             posts = posts.subList(0, limit);
