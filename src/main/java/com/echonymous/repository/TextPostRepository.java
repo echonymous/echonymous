@@ -21,4 +21,10 @@ public interface TextPostRepository extends JpaRepository<TextPost, Long> {
 
     // Fetch text posts filtered by category with a cursor for pagination
     List<TextPost> findByCategoryIgnoreCaseAndCreatedAtBeforeOrderByCreatedAtDesc(String category, LocalDateTime cursor, Pageable pageable);
+
+    // Get the posts for the given author sorted by createdAt descending
+    List<TextPost> findByAuthorIdOrderByCreatedAtDesc(Long authorId, Pageable pageable);
+
+    // When a cursor is provided (createdAt timestamp), get posts with createdAt before this value
+    List<TextPost> findByAuthorIdAndCreatedAtBeforeOrderByCreatedAtDesc(Long authorId, LocalDateTime createdAt, Pageable pageable);
 }

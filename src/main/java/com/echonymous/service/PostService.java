@@ -250,4 +250,51 @@ public class PostService {
         }).collect(Collectors.toList());
         return new FeedResponseDTO<>(postDTOs, nextCursor, hasNext);
     }
+
+    @Transactional
+    public FeedResponseDTO<TextPostDTO> getMyTextPosts(String cursor, int limit, Long currentUserId) {
+        LocalDateTime cursorDate = null;
+        if (cursor != null && !cursor.isEmpty()) {
+            try {
+                // Expect the cursor in ISO_LOCAL_DATE_TIME format (e.g., "2025-03-07T15:30:00")
+                cursorDate = LocalDateTime.parse(cursor);
+            } catch (DateTimeParseException e) {
+                throw new ValidationException("Invalid cursor format. Expected ISO_LOCAL_DATE_TIME.");
+            }
+        }
+        // Request limit+1 to check whether a next page exists
+        Pageable pageable = PageRequest.of(0, limit + 1);
+        List<TextPost> posts;
+        if (cursorDate != null) {
+            posts = textPostRepository.findByAuthorIdAndCreatedAtBeforeOrderByCreatedAtDesc(currentUserId, cursorDate, pageable);
+        } else {
+            posts = textPostRepository.findByAuthorIdOrderByCreatedAtDesc(currentUserId, pageable);
+        }
+
+        boolean hasNext = posts.size() > limit;
+        if (hasNext) {
+            posts = posts.subList(0, limit);
+        }
+        String nextCursor = posts.isEmpty() ? null : posts.get(posts.size() - 1).getCreatedAt().toString();
+
+        List<TextPostDTO> postDTOs = posts.stream().map(post -> {
+            int likesCount = postLikeRepository.countByPost(post);
+            int commentsCount = postCommentRepository.countByPost(post);
+            int echoesCount = postEchoRepository.countByPost(post);
+            boolean isLiked = postLikeRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
+            boolean isEchoed = postEchoRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
+
+            EngagementDTO engagement = new EngagementDTO(likesCount, commentsCount, echoesCount, isLiked, isEchoed);
+
+            return new TextPostDTO(
+                    post.getPostId(),
+                    post.getCategory(),
+                    post.getContent(),
+                    post.getCreatedAt(),
+                    engagement
+            );
+        }).collect(Collectors.toList());
+
+        return new FeedResponseDTO<>(postDTOs, nextCursor, hasNext);
+    }
 }

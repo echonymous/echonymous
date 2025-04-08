@@ -191,4 +191,27 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/my-text-feed")
+    public ResponseEntity<ApiResponseDTO> getMyTextPosts(
+            @RequestParam(required = false) String cursor,
+            @RequestParam(defaultValue = "10") int limit,
+            HttpServletRequest request) {
+
+        String token = jwtUtils.extractJwtFromRequest(request);
+        if (token == null || !jwtUtils.validateToken(token)) {
+            log.error("Invalid or missing JWT token.");
+            return ResponseEntity.status(401)
+                    .body(new ApiResponseDTO(401, false, "Invalid or missing JWT token."));
+        }
+
+        Long currentUserId = jwtUtils.getUserIdFromToken(token);
+        FeedResponseDTO<TextPostDTO> feed = postService.getMyTextPosts(cursor, limit, currentUserId);
+
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("myTextPosts", feed);
+
+        ApiResponseDTO response = new ApiResponseDTO(200, true, "My text posts fetched successfully.", responseData);
+        return ResponseEntity.ok(response);
+    }
+
 }
