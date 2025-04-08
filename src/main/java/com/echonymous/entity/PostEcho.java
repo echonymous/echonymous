@@ -14,7 +14,7 @@ public class PostEcho {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postEchoId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "post_id")   // FK post_id point to the PK of Post
     private Post post;
 

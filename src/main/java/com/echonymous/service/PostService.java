@@ -2,6 +2,7 @@ package com.echonymous.service;
 
 import com.echonymous.dto.*;
 import com.echonymous.entity.*;
+import com.echonymous.exception.NotFoundException;
 import com.echonymous.repository.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
@@ -57,7 +58,7 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    public FeedResponseDTO<TextPostDTO> getTextFeed(String cursor, int limit, Long currentUserId) {
+    public FeedResponseDTO<TextPostDTO> getTextFeed(String cursor, int limit, Long currentUserId, String category) {
         LocalDateTime cursorDate = null;
         if (cursor != null && !cursor.isEmpty()) {
             try {
@@ -70,11 +71,21 @@ public class PostService {
         // Request one extra record to determine if there's a next page
         Pageable pageable = PageRequest.of(0, limit + 1);
         List<TextPost> posts;
-        if (cursorDate != null) {
-            posts = textPostRepository.findByCreatedAtBeforeOrderByCreatedAtDesc(cursorDate, pageable);
+
+        if (!"all".equalsIgnoreCase(category)) {
+            if (cursorDate != null) {
+                posts = textPostRepository.findByCategoryIgnoreCaseAndCreatedAtBeforeOrderByCreatedAtDesc(category, cursorDate, pageable);
+            } else {
+                posts = textPostRepository.findByCategoryIgnoreCaseOrderByCreatedAtDesc(category, pageable);
+            }
         } else {
-            posts = textPostRepository.findAllByOrderByCreatedAtDesc(pageable);
+            if (cursorDate != null) {
+                posts = textPostRepository.findByCreatedAtBeforeOrderByCreatedAtDesc(cursorDate, pageable);
+            } else {
+                posts = textPostRepository.findAllByOrderByCreatedAtDesc(pageable);
+            }
         }
+
         boolean hasNext = posts.size() > limit;
         if (hasNext) {
             posts = posts.subList(0, limit);
@@ -106,6 +117,31 @@ public class PostService {
 
         return new FeedResponseDTO<>(postDTOs, nextCursor, hasNext);
     }
+
+    public TextPostDTO getTextPostById(Long id, Long currentUserId) {
+        Optional<TextPost> optionalPost = textPostRepository.findById(id);
+        if (!optionalPost.isPresent()) {
+            throw new NotFoundException("Text post not found with id: " + id);
+        }
+        TextPost post = optionalPost.get();
+
+        int likesCount = postLikeRepository.countByPost(post);
+        int commentsCount = postCommentRepository.countByPost(post);
+        int echoesCount = postEchoRepository.countByPost(post);
+        boolean isLiked = postLikeRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
+        boolean isEchoed = postEchoRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
+
+        EngagementDTO engagement = new EngagementDTO(likesCount, commentsCount, echoesCount, isLiked, isEchoed);
+
+        return new TextPostDTO(
+                post.getPostId(),
+                post.getCategory(),
+                post.getContent(),
+                post.getCreatedAt(),
+                engagement
+        );
+    }
+
 
     @Transactional
     public ToggleLikeResultDTO toggleLike(Long postId, Long userId) {
@@ -165,5 +201,53 @@ public class PostService {
         // Return the updated echo count and the echo action
         int updatedEchoCount = postEchoRepository.countByPost(post);
         return new ToggleEchoResultDTO(isEchoed, updatedEchoCount);
+    }
+
+    public FeedResponseDTO<TextPostDTO> getEchoedTextPosts(Long userId, int limit, String cursor) {
+        LocalDateTime cursorDate = null;
+        if (cursor != null && !cursor.isEmpty()) {
+            try {
+                // Expecting the cursor in ISO_LOCAL_DATE_TIME format.
+                cursorDate = LocalDateTime.parse(cursor);
+            } catch (DateTimeParseException e) {
+                throw new ValidationException("Invalid cursor format. Expected ISO_LOCAL_DATE_TIME.");
+            }
+        }
+        // Request one extra record to determine if there's a next page.
+        Pageable pageable = PageRequest.of(0, limit + 1);
+        List<PostEcho> echoes;
+        if (cursorDate != null) {
+            echoes = postEchoRepository.findTextPostEchoedByUserBefore(userId, cursorDate, pageable);
+        } else {
+            echoes = postEchoRepository.findTextPostEchoedByUser(userId, pageable);
+        }
+        boolean hasNext = echoes.size() > limit;
+        if (hasNext) {
+            echoes = echoes.subList(0, limit);
+        }
+        // The next cursor is the echoedAt of the last PostEcho.
+        String nextCursor = null;
+        if (!echoes.isEmpty()) {
+            LocalDateTime lastEchoedAt = echoes.get(echoes.size() - 1).getEchoedAt();
+            nextCursor = lastEchoedAt.toString();
+        }
+        // Map each PostEcho to a TextPostDTO.
+        List<TextPostDTO> postDTOs = echoes.stream().map(echo -> {
+            TextPost textPost = (TextPost) echo.getPost(); // safe cast due to TYPE filtering
+            int likesCount = postLikeRepository.countByPost(textPost);
+            int commentsCount = postCommentRepository.countByPost(textPost);
+            int echoesCount = postEchoRepository.countByPost(textPost);
+            boolean isLiked = postLikeRepository.findByPostAndUser_UserId(textPost, userId).isPresent();
+            // As these are echoed posts, set isEchoed to true.
+            EngagementDTO engagement = new EngagementDTO(likesCount, commentsCount, echoesCount, isLiked, true);
+            return new TextPostDTO(
+                    textPost.getPostId(),
+                    textPost.getCategory(),
+                    textPost.getContent(),
+                    textPost.getCreatedAt(),
+                    engagement
+            );
+        }).collect(Collectors.toList());
+        return new FeedResponseDTO<>(postDTOs, nextCursor, hasNext);
     }
 }

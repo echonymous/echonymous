@@ -35,7 +35,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (token != null && jwtUtils.validateToken(token)) {
             Long userId = jwtUtils.getUserIdFromToken(token);
-            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>()));
+            log.debug("Extracted userId from token: {}", userId);
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userId, null, new ArrayList<>());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.debug("Authentication set in SecurityContext for userId: {}", userId);
         }
 
         filterChain.doFilter(request, response); // Proceed with the next filter
