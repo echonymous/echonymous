@@ -2,6 +2,7 @@ package com.echonymous.service;
 
 import com.echonymous.dto.*;
 import com.echonymous.entity.*;
+import com.echonymous.exception.NotFoundException;
 import com.echonymous.repository.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
@@ -116,6 +117,31 @@ public class PostService {
 
         return new FeedResponseDTO<>(postDTOs, nextCursor, hasNext);
     }
+
+    public TextPostDTO getTextPostById(Long id, Long currentUserId) {
+        Optional<TextPost> optionalPost = textPostRepository.findById(id);
+        if (!optionalPost.isPresent()) {
+            throw new NotFoundException("Text post not found with id: " + id);
+        }
+        TextPost post = optionalPost.get();
+
+        int likesCount = postLikeRepository.countByPost(post);
+        int commentsCount = postCommentRepository.countByPost(post);
+        int echoesCount = postEchoRepository.countByPost(post);
+        boolean isLiked = postLikeRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
+        boolean isEchoed = postEchoRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
+
+        EngagementDTO engagement = new EngagementDTO(likesCount, commentsCount, echoesCount, isLiked, isEchoed);
+
+        return new TextPostDTO(
+                post.getPostId(),
+                post.getCategory(),
+                post.getContent(),
+                post.getCreatedAt(),
+                engagement
+        );
+    }
+
 
     @Transactional
     public ToggleLikeResultDTO toggleLike(Long postId, Long userId) {
