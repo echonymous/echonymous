@@ -218,7 +218,7 @@ public class PostController {
 
     @PutMapping("/edit-text-feed/{postId}")
     public ResponseEntity<ApiResponseDTO> editTextPost(@PathVariable Long postId,
-                                                   @RequestParam String newCategory,
+                                                   @RequestParam(required = false) String newCategory,
                                                    @RequestParam String newContent,
                                                    HttpServletRequest request) {
         String token = jwtUtils.extractJwtFromRequest(request);

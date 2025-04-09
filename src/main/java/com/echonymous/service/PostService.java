@@ -134,7 +134,9 @@ public class PostService {
         if (!post.getAuthorId().equals(currentUserId)) {
             throw new RuntimeException("User not authorized to edit this post.");
         }
-        post.setCategory(newCategory);
+        if (newCategory != null && !newCategory.trim().isEmpty()) {
+            post.setCategory(newCategory);
+        }
         post.setContent(newContent);
         post.setUpdatedAt(LocalDateTime.now());
         TextPost updatedPost = textPostRepository.save(post);
