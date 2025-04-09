@@ -10,6 +10,7 @@ import com.echonymous.repository.CommentLikeRepository;
 import com.echonymous.repository.PostCommentRepository;
 import com.echonymous.repository.PostRepository;
 import com.echonymous.repository.UserRepository;
+import com.echonymous.util.DateTimeUtils;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -100,13 +101,9 @@ public class CommentService {
 
         Pageable pageable = PageRequest.of(0, limit + 1);
         List<PostComment> comments;
-        if (cursor != null && !cursor.isEmpty()) {
-            try {
-                LocalDateTime cursorDate = LocalDateTime.parse(cursor);
-                comments = postCommentRepository.findByPostAndParentCommentIsNullAndCreatedAtBeforeOrderByCreatedAtDesc(post, cursorDate, pageable);
-            } catch (DateTimeParseException e) {
-                throw new ValidationException("Invalid cursor format. Expected ISO_LOCAL_DATE_TIME.");
-            }
+        LocalDateTime cursorDate = DateTimeUtils.parseCursor(cursor);
+        if (cursorDate != null) {
+            comments = postCommentRepository.findByPostAndParentCommentIsNullAndCreatedAtBeforeOrderByCreatedAtDesc(post, cursorDate, pageable);
         } else {
             comments = postCommentRepository.findByPostAndParentCommentIsNullOrderByCreatedAtDesc(post, pageable);
         }
@@ -136,13 +133,9 @@ public class CommentService {
 
         Pageable pageable = PageRequest.of(0, limit + 1);
         List<PostComment> replies;
-        if (cursor != null && !cursor.isEmpty()) {
-            try {
-                LocalDateTime cursorDate = LocalDateTime.parse(cursor);
-                replies = postCommentRepository.findByParentCommentAndCreatedAtBeforeOrderByCreatedAtDesc(parent, cursorDate, pageable);
-            } catch (DateTimeParseException e) {
-                throw new ValidationException("Invalid cursor format. Expected ISO_LOCAL_DATE_TIME.");
-            }
+        LocalDateTime cursorDate = DateTimeUtils.parseCursor(cursor);
+        if (cursorDate != null) {
+            replies = postCommentRepository.findByParentCommentAndCreatedAtBeforeOrderByCreatedAtDesc(parent, cursorDate, pageable);
         } else {
             replies = postCommentRepository.findByParentCommentOrderByCreatedAtDesc(parent, pageable);
         }
@@ -185,6 +178,9 @@ public class CommentService {
         return mapToCommentDTO(comment, userId);
     }
 
+    /**
+     * Maps PostComment (reply as well) entity to CommentDTO.
+     */
     private CommentDTO mapToCommentDTO(PostComment comment, Long currentUserId) {
         int commentLikesCount = commentLikeRepository.countByComment(comment);
         boolean isCommentLiked = commentLikeRepository.findByCommentAndUser_UserId(comment, currentUserId).isPresent();

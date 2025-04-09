@@ -191,10 +191,11 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/my-text-feed")
+    @GetMapping("/user-feed")
     public ResponseEntity<ApiResponseDTO> getMyTextPosts(
             @RequestParam(required = false) String cursor,
             @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(required = false) Long userId,
             HttpServletRequest request) {
 
         String token = jwtUtils.extractJwtFromRequest(request);
@@ -205,7 +206,8 @@ public class PostController {
         }
 
         Long currentUserId = jwtUtils.getUserIdFromToken(token);
-        FeedResponseDTO<TextPostDTO> feed = postService.getMyTextPosts(cursor, limit, currentUserId);
+        Long targetUserId = (userId == null) ? currentUserId : userId;
+        FeedResponseDTO<TextPostDTO> feed = postService.getUserTextPosts(cursor, limit, targetUserId, currentUserId);
 
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("myTextPosts", feed);
