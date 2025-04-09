@@ -127,6 +127,31 @@ public class PostService {
     }
 
     @Transactional
+    public TextPostDTO updateTextPost(Long postId, Long currentUserId, String newCategory, String newContent) {
+        TextPost post = textPostRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("Text post not found with id: " + postId));
+        // Only the post author can update the post.
+        if (!post.getAuthorId().equals(currentUserId)) {
+            throw new RuntimeException("User not authorized to edit this post.");
+        }
+        post.setCategory(newCategory);
+        post.setContent(newContent);
+        post.setUpdatedAt(LocalDateTime.now());
+        TextPost updatedPost = textPostRepository.save(post);
+        return mapTextPostToDTO(updatedPost, currentUserId);
+    }
+
+    @Transactional
+    public void deletePost(Long postId, Long currentUserId) {
+        TextPost post = textPostRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("Text post not found with id: " + postId));
+        if (!post.getAuthorId().equals(currentUserId)) {
+            throw new RuntimeException("User not authorized to delete this post.");
+        }
+        postRepository.delete(post);
+    }
+
+    @Transactional
     public ToggleLikeResultDTO toggleLike(Long postId, Long userId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found."));
@@ -227,6 +252,7 @@ public class PostService {
                 post.getCategory(),
                 post.getContent(),
                 post.getCreatedAt(),
+                post.getUpdatedAt(),
                 engagement
         );
     }

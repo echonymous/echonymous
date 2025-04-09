@@ -216,4 +216,40 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("/edit-text-feed/{postId}")
+    public ResponseEntity<ApiResponseDTO> editTextPost(@PathVariable Long postId,
+                                                   @RequestParam String newCategory,
+                                                   @RequestParam String newContent,
+                                                   HttpServletRequest request) {
+        String token = jwtUtils.extractJwtFromRequest(request);
+        if (token == null || !jwtUtils.validateToken(token)) {
+            log.error("Invalid or missing JWT token.");
+            return ResponseEntity.status(401)
+                    .body(new ApiResponseDTO(401, false, "Invalid or missing JWT token."));
+        }
+        Long currentUserId = jwtUtils.getUserIdFromToken(token);
+        TextPostDTO updatedPost = postService.updateTextPost(postId, currentUserId, newCategory, newContent);
+
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("updatedPost", updatedPost);
+
+        ApiResponseDTO response = new ApiResponseDTO(200, true, "Post updated successfully.", responseData);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/delete-text-post/{postId}")
+    public ResponseEntity<ApiResponseDTO> deleteTextPost(@PathVariable Long postId,
+                                                     HttpServletRequest request) {
+        String token = jwtUtils.extractJwtFromRequest(request);
+        if (token == null || !jwtUtils.validateToken(token)) {
+            log.error("Invalid or missing JWT token.");
+            return ResponseEntity.status(401)
+                    .body(new ApiResponseDTO(401, false, "Invalid or missing JWT token."));
+        }
+        Long currentUserId = jwtUtils.getUserIdFromToken(token);
+        postService.deletePost(postId, currentUserId);
+        ApiResponseDTO response = new ApiResponseDTO(200, true, "Post deleted successfully.");
+        return ResponseEntity.ok(response);
+    }
+
 }

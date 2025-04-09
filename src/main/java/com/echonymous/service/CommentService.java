@@ -66,7 +66,7 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentDTO updateComment(Long commentId, Long userId, String updatedComment) {
+    public CommentDTO updateComment(Long commentId, Long userId, String newComment) {
         PostComment comment = postCommentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found."));
 
@@ -75,7 +75,7 @@ public class CommentService {
             throw new RuntimeException("User not authorized to update this comment.");
         }
 
-        comment.setComment(updatedComment);
+        comment.setComment(newComment);
         comment.setUpdatedAt(LocalDateTime.now());
         PostComment updatedComm = postCommentRepository.save(comment);
 

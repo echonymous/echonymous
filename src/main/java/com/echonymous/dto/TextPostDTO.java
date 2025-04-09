@@ -16,6 +16,7 @@ public class TextPostDTO {
     private String category;
     private String content;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private EngagementDTO engagement;
 
 }
