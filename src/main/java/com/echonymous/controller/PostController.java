@@ -217,10 +217,11 @@ public class PostController {
     }
 
     @PutMapping("/edit-text-feed/{postId}")
-    public ResponseEntity<ApiResponseDTO> editTextPost(@PathVariable Long postId,
-                                                   @RequestParam(required = false) String newCategory,
-                                                   @RequestParam String newContent,
-                                                   HttpServletRequest request) {
+    public ResponseEntity<ApiResponseDTO> editTextPost(
+            @PathVariable Long postId,
+            @RequestBody PostRequestDTO postRequestDTO,
+            HttpServletRequest request) {
+
         String token = jwtUtils.extractJwtFromRequest(request);
         if (token == null || !jwtUtils.validateToken(token)) {
             log.error("Invalid or missing JWT token.");
@@ -228,7 +229,13 @@ public class PostController {
                     .body(new ApiResponseDTO(401, false, "Invalid or missing JWT token."));
         }
         Long currentUserId = jwtUtils.getUserIdFromToken(token);
-        TextPostDTO updatedPost = postService.updateTextPost(postId, currentUserId, newCategory, newContent);
+
+        TextPostDTO updatedPost = postService.updateTextPost(
+                postId,
+                currentUserId,
+                postRequestDTO.getCategory(),
+                postRequestDTO.getContent()
+        );
 
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("updatedPost", updatedPost);
@@ -237,7 +244,7 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/delete-text-post/{postId}")
+    @DeleteMapping("/delete-text-feed/{postId}")
     public ResponseEntity<ApiResponseDTO> deleteTextPost(@PathVariable Long postId,
                                                      HttpServletRequest request) {
         String token = jwtUtils.extractJwtFromRequest(request);

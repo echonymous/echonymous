@@ -139,6 +139,7 @@ public class PostService {
         }
         post.setContent(newContent);
         post.setUpdatedAt(LocalDateTime.now());
+
         TextPost updatedPost = textPostRepository.save(post);
         return mapTextPostToDTO(updatedPost, currentUserId);
     }
