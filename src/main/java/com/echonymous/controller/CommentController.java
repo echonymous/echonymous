@@ -60,12 +60,13 @@ public class CommentController {
             return ResponseEntity.status(401)
                     .body(new ApiResponseDTO(401, false, "Invalid or missing JWT token."));
         }
-
         Long userId = jwtUtils.getUserIdFromToken(token);
-        String updatedComment = payload.get("comment");
-        CommentDTO commentDTO = commentService.updateComment(commentId, userId, updatedComment);
+        String newComment = payload.get("comment");
+        CommentDTO commentDTO = commentService.updateComment(commentId, userId, newComment);
+
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("comment", commentDTO);
+
         ApiResponseDTO response = new ApiResponseDTO(200, true, "Comment updated successfully.", null, responseData);
         return ResponseEntity.ok(response);
     }

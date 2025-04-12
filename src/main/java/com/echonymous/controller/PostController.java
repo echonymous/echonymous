@@ -191,4 +191,72 @@ public class PostController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/user-feed")
+    public ResponseEntity<ApiResponseDTO> getMyTextPosts(
+            @RequestParam(required = false) String cursor,
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(required = false) Long userId,
+            HttpServletRequest request) {
+
+        String token = jwtUtils.extractJwtFromRequest(request);
+        if (token == null || !jwtUtils.validateToken(token)) {
+            log.error("Invalid or missing JWT token.");
+            return ResponseEntity.status(401)
+                    .body(new ApiResponseDTO(401, false, "Invalid or missing JWT token."));
+        }
+
+        Long currentUserId = jwtUtils.getUserIdFromToken(token);
+        Long targetUserId = (userId == null) ? currentUserId : userId;
+        FeedResponseDTO<TextPostDTO> feed = postService.getUserTextPosts(cursor, limit, targetUserId, currentUserId);
+
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("myTextPosts", feed);
+
+        ApiResponseDTO response = new ApiResponseDTO(200, true, "My text posts fetched successfully.", responseData);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/edit-text-feed/{postId}")
+    public ResponseEntity<ApiResponseDTO> editTextPost(
+            @PathVariable Long postId,
+            @RequestBody PostRequestDTO postRequestDTO,
+            HttpServletRequest request) {
+
+        String token = jwtUtils.extractJwtFromRequest(request);
+        if (token == null || !jwtUtils.validateToken(token)) {
+            log.error("Invalid or missing JWT token.");
+            return ResponseEntity.status(401)
+                    .body(new ApiResponseDTO(401, false, "Invalid or missing JWT token."));
+        }
+        Long currentUserId = jwtUtils.getUserIdFromToken(token);
+
+        TextPostDTO updatedPost = postService.updateTextPost(
+                postId,
+                currentUserId,
+                postRequestDTO.getCategory(),
+                postRequestDTO.getContent()
+        );
+
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("updatedPost", updatedPost);
+
+        ApiResponseDTO response = new ApiResponseDTO(200, true, "Post updated successfully.", responseData);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/delete-text-feed/{postId}")
+    public ResponseEntity<ApiResponseDTO> deleteTextPost(@PathVariable Long postId,
+                                                     HttpServletRequest request) {
+        String token = jwtUtils.extractJwtFromRequest(request);
+        if (token == null || !jwtUtils.validateToken(token)) {
+            log.error("Invalid or missing JWT token.");
+            return ResponseEntity.status(401)
+                    .body(new ApiResponseDTO(401, false, "Invalid or missing JWT token."));
+        }
+        Long currentUserId = jwtUtils.getUserIdFromToken(token);
+        postService.deletePost(postId, currentUserId);
+        ApiResponseDTO response = new ApiResponseDTO(200, true, "Post deleted successfully.");
+        return ResponseEntity.ok(response);
+    }
+
 }

@@ -4,15 +4,14 @@ import com.echonymous.dto.*;
 import com.echonymous.entity.*;
 import com.echonymous.exception.NotFoundException;
 import com.echonymous.repository.*;
+import com.echonymous.util.DateTimeUtils;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,15 +58,8 @@ public class PostService {
     }
 
     public FeedResponseDTO<TextPostDTO> getTextFeed(String cursor, int limit, Long currentUserId, String category) {
-        LocalDateTime cursorDate = null;
-        if (cursor != null && !cursor.isEmpty()) {
-            try {
-                // Expecting the cursor in ISO_LOCAL_DATE_TIME format, e.g. "2025-03-07T15:30:00"
-                cursorDate = LocalDateTime.parse(cursor);
-            } catch (DateTimeParseException e) {
-                throw new ValidationException("Invalid cursor format. Expected ISO_LOCAL_DATE_TIME.");
-            }
-        }
+        LocalDateTime cursorDate = DateTimeUtils.parseCursor(cursor);
+
         // Request one extra record to determine if there's a next page
         Pageable pageable = PageRequest.of(0, limit + 1);
         List<TextPost> posts;
@@ -91,29 +83,35 @@ public class PostService {
             posts = posts.subList(0, limit);
         }
         // Next cursor is the createdAt of the last post in the list
-        String nextCursor = null;
-        if (!posts.isEmpty()) {
-            LocalDateTime lastCreatedAt = posts.get(posts.size() - 1).getCreatedAt();
-            nextCursor = lastCreatedAt.toString();
+        String nextCursor = !posts.isEmpty() ? posts.get(posts.size() - 1).getCreatedAt().toString() : null;
+
+        List<TextPostDTO> postDTOs = posts.stream()
+                .map(post -> mapTextPostToDTO(post, currentUserId))
+                .collect(Collectors.toList());
+
+        return new FeedResponseDTO<>(postDTOs, nextCursor, hasNext);
+    }
+
+    // Generic method to fetch a user's text posts (for both my-feed and other users' feed)
+    @Transactional
+    public FeedResponseDTO<TextPostDTO> getUserTextPosts(String cursor, int limit, Long targetUserId, Long currentUserId) {
+        LocalDateTime cursorDate = DateTimeUtils.parseCursor(cursor);
+        // Request limit+1 to check for a next page
+        Pageable pageable = PageRequest.of(0, limit + 1);
+        List<TextPost> posts;
+        if (cursorDate != null) {
+            posts = textPostRepository.findByAuthorIdAndCreatedAtBeforeOrderByCreatedAtDesc(targetUserId, cursorDate, pageable);
+        } else {
+            posts = textPostRepository.findByAuthorIdOrderByCreatedAtDesc(targetUserId, pageable);
         }
-
-        List<TextPostDTO> postDTOs = posts.stream().map(post -> {
-            int likesCount = postLikeRepository.countByPost(post);
-            int commentsCount = postCommentRepository.countByPost(post);
-            int echoesCount = postEchoRepository.countByPost(post);
-            boolean isLiked = postLikeRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
-            boolean isEchoed = postEchoRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
-
-            EngagementDTO engagement = new EngagementDTO(likesCount, commentsCount, echoesCount, isLiked, isEchoed);
-
-            return new TextPostDTO(
-                    post.getPostId(),
-                    post.getCategory(),
-                    post.getContent(),
-                    post.getCreatedAt(),
-                    engagement
-            );
-        }).collect(Collectors.toList());
+        boolean hasNext = posts.size() > limit;
+        if (hasNext) {
+            posts = posts.subList(0, limit);
+        }
+        String nextCursor = posts.isEmpty() ? null : posts.get(posts.size() - 1).getCreatedAt().toString();
+        List<TextPostDTO> postDTOs = posts.stream()
+                .map(post -> mapTextPostToDTO(post, currentUserId))
+                .collect(Collectors.toList());
 
         return new FeedResponseDTO<>(postDTOs, nextCursor, hasNext);
     }
@@ -123,25 +121,38 @@ public class PostService {
         if (!optionalPost.isPresent()) {
             throw new NotFoundException("Text post not found with id: " + id);
         }
+
         TextPost post = optionalPost.get();
-
-        int likesCount = postLikeRepository.countByPost(post);
-        int commentsCount = postCommentRepository.countByPost(post);
-        int echoesCount = postEchoRepository.countByPost(post);
-        boolean isLiked = postLikeRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
-        boolean isEchoed = postEchoRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
-
-        EngagementDTO engagement = new EngagementDTO(likesCount, commentsCount, echoesCount, isLiked, isEchoed);
-
-        return new TextPostDTO(
-                post.getPostId(),
-                post.getCategory(),
-                post.getContent(),
-                post.getCreatedAt(),
-                engagement
-        );
+        return mapTextPostToDTO(post, currentUserId);
     }
 
+    @Transactional
+    public TextPostDTO updateTextPost(Long postId, Long currentUserId, String newCategory, String newContent) {
+        TextPost post = textPostRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("Text post not found with id: " + postId));
+        // Only the post author can update the post.
+        if (!post.getAuthorId().equals(currentUserId)) {
+            throw new RuntimeException("User not authorized to edit this post.");
+        }
+        if (newCategory != null && !newCategory.trim().isEmpty()) {
+            post.setCategory(newCategory);
+        }
+        post.setContent(newContent);
+        post.setUpdatedAt(LocalDateTime.now());
+
+        TextPost updatedPost = textPostRepository.save(post);
+        return mapTextPostToDTO(updatedPost, currentUserId);
+    }
+
+    @Transactional
+    public void deletePost(Long postId, Long currentUserId) {
+        TextPost post = textPostRepository.findById(postId)
+                .orElseThrow(() -> new NotFoundException("Text post not found with id: " + postId));
+        if (!post.getAuthorId().equals(currentUserId)) {
+            throw new RuntimeException("User not authorized to delete this post.");
+        }
+        postRepository.delete(post);
+    }
 
     @Transactional
     public ToggleLikeResultDTO toggleLike(Long postId, Long userId) {
@@ -204,15 +215,7 @@ public class PostService {
     }
 
     public FeedResponseDTO<TextPostDTO> getEchoedTextPosts(Long userId, int limit, String cursor) {
-        LocalDateTime cursorDate = null;
-        if (cursor != null && !cursor.isEmpty()) {
-            try {
-                // Expecting the cursor in ISO_LOCAL_DATE_TIME format.
-                cursorDate = LocalDateTime.parse(cursor);
-            } catch (DateTimeParseException e) {
-                throw new ValidationException("Invalid cursor format. Expected ISO_LOCAL_DATE_TIME.");
-            }
-        }
+        LocalDateTime cursorDate = DateTimeUtils.parseCursor(cursor);
         // Request one extra record to determine if there's a next page.
         Pageable pageable = PageRequest.of(0, limit + 1);
         List<PostEcho> echoes;
@@ -226,28 +229,34 @@ public class PostService {
             echoes = echoes.subList(0, limit);
         }
         // The next cursor is the echoedAt of the last PostEcho.
-        String nextCursor = null;
-        if (!echoes.isEmpty()) {
-            LocalDateTime lastEchoedAt = echoes.get(echoes.size() - 1).getEchoedAt();
-            nextCursor = lastEchoedAt.toString();
-        }
-        // Map each PostEcho to a TextPostDTO.
+        String nextCursor = !echoes.isEmpty() ? echoes.get(echoes.size() - 1).getEchoedAt().toString() : null;
+
         List<TextPostDTO> postDTOs = echoes.stream().map(echo -> {
-            TextPost textPost = (TextPost) echo.getPost(); // safe cast due to TYPE filtering
-            int likesCount = postLikeRepository.countByPost(textPost);
-            int commentsCount = postCommentRepository.countByPost(textPost);
-            int echoesCount = postEchoRepository.countByPost(textPost);
-            boolean isLiked = postLikeRepository.findByPostAndUser_UserId(textPost, userId).isPresent();
-            // As these are echoed posts, set isEchoed to true.
-            EngagementDTO engagement = new EngagementDTO(likesCount, commentsCount, echoesCount, isLiked, true);
-            return new TextPostDTO(
-                    textPost.getPostId(),
-                    textPost.getCategory(),
-                    textPost.getContent(),
-                    textPost.getCreatedAt(),
-                    engagement
-            );
+            TextPost textPost = (TextPost) echo.getPost();
+            return mapTextPostToDTO(textPost, userId);
         }).collect(Collectors.toList());
         return new FeedResponseDTO<>(postDTOs, nextCursor, hasNext);
+    }
+
+    /**
+     * Maps a TextPost entity to TextPostDTO using engagement metrics.
+     */
+    private TextPostDTO mapTextPostToDTO(TextPost post, Long currentUserId) {
+        int likesCount = postLikeRepository.countByPost(post);
+        int commentsCount = postCommentRepository.countByPost(post);
+        int echoesCount = postEchoRepository.countByPost(post);
+        boolean isLiked = postLikeRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
+        boolean isEchoed = postEchoRepository.findByPostAndUser_UserId(post, currentUserId).isPresent();
+
+        EngagementDTO engagement = new EngagementDTO(likesCount, commentsCount, echoesCount, isLiked, isEchoed);
+
+        return new TextPostDTO(
+                post.getPostId(),
+                post.getCategory(),
+                post.getContent(),
+                post.getCreatedAt(),
+                post.getUpdatedAt(),
+                engagement
+        );
     }
 }
