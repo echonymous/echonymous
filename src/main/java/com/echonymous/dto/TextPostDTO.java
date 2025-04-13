@@ -1,9 +1,6 @@
 package com.echonymous.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -18,5 +15,6 @@ public class TextPostDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private EngagementDTO engagement;
+    private Boolean isCurrentUserPost; // flag to indicate if the authenticated user authored this post
 
 }

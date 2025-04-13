@@ -12,14 +12,12 @@ import com.echonymous.repository.PostRepository;
 import com.echonymous.repository.UserRepository;
 import com.echonymous.util.DateTimeUtils;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -198,6 +196,8 @@ public class CommentService {
         commentDTO.setCommentLiked(isCommentLiked);
         commentDTO.setParentCommentId(parentCommentId);
         commentDTO.setReplyCount(replyCount);
+        // Determine if this comment was authored by the current user.
+        commentDTO.setIsCurrentUserComment(comment.getUser().getUserId().equals(currentUserId));
 
         return commentDTO;
     }

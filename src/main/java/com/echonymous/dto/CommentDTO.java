@@ -22,4 +22,6 @@ public class CommentDTO {
     private boolean isCommentLiked;
     private Long parentCommentId; // null for top-level comments
     private int replyCount;
+    private Boolean isCurrentUserComment; // flag to indicate if the authenticated user authored this comment
+
 }

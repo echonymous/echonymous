@@ -250,13 +250,15 @@ public class PostService {
 
         EngagementDTO engagement = new EngagementDTO(likesCount, commentsCount, echoesCount, isLiked, isEchoed);
 
-        return new TextPostDTO(
-                post.getPostId(),
-                post.getCategory(),
-                post.getContent(),
-                post.getCreatedAt(),
-                post.getUpdatedAt(),
-                engagement
-        );
+        TextPostDTO textPostDTO = new TextPostDTO();
+        textPostDTO.setPostId(post.getPostId());
+        textPostDTO.setCategory(post.getCategory());
+        textPostDTO.setContent(post.getContent());
+        textPostDTO.setCreatedAt(post.getCreatedAt());
+        textPostDTO.setUpdatedAt(post.getUpdatedAt());
+        textPostDTO.setEngagement(engagement);
+        // Determine if this post was authored by the current user.
+        textPostDTO.setIsCurrentUserPost(post.getAuthorId().equals(currentUserId));
+        return textPostDTO;
     }
 }

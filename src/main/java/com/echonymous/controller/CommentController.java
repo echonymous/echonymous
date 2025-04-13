@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -26,7 +25,7 @@ public class CommentController {
         this.jwtUtils = jwtUtils;
     }
 
-    @PostMapping("/posts/{postId}")
+    @PostMapping("/post/{postId}")
     public ResponseEntity<ApiResponseDTO> createComment(@PathVariable Long postId,
                                                         @RequestParam(required = false) Long parentCommentId,
                                                         @RequestBody Map<String, String> payload,
