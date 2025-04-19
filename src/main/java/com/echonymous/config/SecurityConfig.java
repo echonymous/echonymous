@@ -33,7 +33,12 @@ public class SecurityConfig {
                 .cors(withDefaults())
                 .csrf().disable() // Disable CSRF for simplicity
                 .authorizeRequests()
-                .requestMatchers("/api/auth/**").permitAll() // Allow public access to certain endpoints
+                .requestMatchers(
+                        "/api/auth/**",
+                        "/v3/api-docs/**",
+                        "/swagger-ui.html",
+                        "/swagger-ui/**"
+                ).permitAll() // Allow public access to certain endpoints
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(new JwtAuthFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class); // Add the JWT filter before the default Spring Security filter
